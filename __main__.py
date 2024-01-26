@@ -7,6 +7,13 @@
 
 import pygame
 
+try:
+    from settings import *
+except ImportError:
+    FULLSCREEN = False
+    SCALED = False
+
+
 SCR_W, SCR_H = 640, 360
 
 
@@ -44,7 +51,17 @@ class Application:
 
         self.running = False
 
-        self.screen = pygame.display.set_mode((SCR_W, SCR_H), flags=pygame.FULLSCREEN|pygame.SCALED)
+        flags = 0
+
+        if FULLSCREEN:
+            if SCALED:
+                flags = pygame.FULLSCREEN | pygame.SCALED
+            # no fullscreen if not SCALED
+        else:
+            if SCALED:
+                flags = pygame.SCALED
+
+        self.screen = pygame.display.set_mode((SCR_W, SCR_H), flags=flags)
 
         self.loadGraphics()
 
