@@ -99,8 +99,9 @@ class Application:
                 if tile in TILES:
                     self.drawTile(tile, x, y)
 
-        self.font.centerText(self.screen, 'THIS IS A TEST', y=5)
-        self.font.centerText(self.screen, 'WASD = SCROLL AROUND', y=7)
+        self.font.centerText(self.screen, 'WASD = SCROLL AROUND', y=5)
+        self.font.centerText(self.screen, 'F1/F2 = PREV/NEXT LEVEL', y=7)
+        self.font.drawText(self.screen, 'LEV %02i' % self.level_i, x=1, y=1)
 
         pygame.display.flip()
 
