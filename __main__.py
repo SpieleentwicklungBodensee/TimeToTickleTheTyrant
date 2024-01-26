@@ -87,6 +87,8 @@ class Application:
             self.level = [line.strip() for line in f.readlines()]   # note: levels should always contain a border!
         self.lev_w = len(self.level[0])
         self.lev_h = len(self.level)
+        self.cam_x = 0
+        self.cam_y = 0
 
         self.fluid = Fluid(self.lev_w, self.lev_h)
 
