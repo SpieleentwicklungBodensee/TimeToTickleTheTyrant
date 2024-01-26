@@ -6,6 +6,7 @@
 ######################
 
 import pygame
+import os
 from bitmapfont import BitmapFont
 
 try:
@@ -17,34 +18,10 @@ except ImportError:
 
 SCR_W, SCR_H = 640, 360
 
-
 TILES = {}
 
 TILE_W = 32
 TILE_H = 32
-
-
-LEVEL = ['################################',
-         '#                              #',
-         '#                              #',
-         '#                              #',
-         '#     ### ### ### ### ###      #',
-         '#      #   #   #   #   #       #',
-         '#      #   #   #   #   #       #',
-         '#      #   #   #   #   #       #',
-         '#                              #',
-         '#                              #',
-         '#########    ###################',
-         '#                              #',
-         '#                              #',
-         '#                              #',
-         '#                              #',
-         '################################',
-         ]
-
-LEV_W = len(LEVEL[0])
-LEV_H = len(LEVEL)
-
 SCROLL_SPEED = 4
 
 
@@ -54,6 +31,13 @@ class Application:
 
         self.running = False
 
+        self.screen = pygame.display.set_mode((SCR_W, SCR_H),
+                                              flags=pygame.FULLSCREEN | pygame.SCALED)
+        self.level_i = 1
+        self.level = []
+        self.lev_w = 0
+        self.lev_h = 0
+        self.level_amount = len(os.listdir("./levels"))
         flags = 0
 
         if FULLSCREEN:
@@ -67,6 +51,7 @@ class Application:
         self.screen = pygame.display.set_mode((SCR_W, SCR_H), flags=flags)
 
         self.loadGraphics()
+        self.loadLevel(self.level_i)
 
         self.cam_x = 0
         self.cam_y = 0
@@ -79,6 +64,13 @@ class Application:
 
         self.font = BitmapFont('gfx/heimatfont.png', font_w=8, font_h=8, scr_w=SCR_W, scr_h=SCR_H)
 
+    def loadLevel(self, level_name):
+        print('loading level: ' + str(level_name))
+        with open("levels/{}.lvl".format(level_name)) as f:
+            self.level = f.readlines()
+        self.lev_w = len(self.level[0])
+        self.lev_h = len(self.level)
+
     def drawTile(self, tile, x, y):
         self.screen.blit(TILES[tile], (x * TILE_W - self.cam_x, y * TILE_H - self.cam_y))
 
@@ -88,20 +80,20 @@ class Application:
 
         if self.cam_x < 0:
             self.cam_x = 0
-        if self.cam_x > LEV_W * TILE_W - SCR_W:
-            self.cam_x = LEV_W * TILE_W - SCR_W
+        if self.cam_x > self.lev_w * TILE_W - SCR_W:
+            self.cam_x = self.lev_w * TILE_W - SCR_W
         if self.cam_y < 0:
             self.cam_y = 0
-        if self.cam_y > LEV_H * TILE_H - SCR_H:
-            self.cam_y = LEV_H * TILE_H - SCR_H
+        if self.cam_y > self.lev_h * TILE_H - SCR_H:
+            self.cam_y = self.lev_h * TILE_H - SCR_H
 
     def render(self):
         self.screen.fill((40, 60, 80))
 
         # render level
-        for y in range(LEV_H):
-            for x in range(LEV_W):
-                tile = LEVEL[y][x]
+        for y in range(self.lev_h):
+            for x in range(self.lev_w):
+                tile = self.level[y][x]
 
                 if tile in TILES:
                     self.drawTile(tile, x, y)
@@ -122,6 +114,16 @@ class Application:
 
                 elif e.key == pygame.K_F11:
                     pygame.display.toggle_fullscreen()
+                elif e.key == pygame.K_F1:
+                    self.level_i -= 1
+                    if self.level_i < 1:
+                        self.level_i = self.level_amount
+                    self.loadLevel(self.level_i)
+                elif e.key == pygame.K_F2:
+                    self.level_i += 1
+                    if self.level_i > self.level_amount:
+                        self.level_i = 1
+                    self.loadLevel(self.level_i)
 
                 elif e.key == pygame.K_RETURN:
                     if modstate & pygame.KMOD_ALT:
