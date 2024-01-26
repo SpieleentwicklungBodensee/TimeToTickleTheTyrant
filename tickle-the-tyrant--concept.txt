@@ -7,6 +7,19 @@ Landschaften
 	•	Stadt / City
 	•	Bauernhof, Land / Farm
 	•	Mond / Moon
-	•	Winterlamndschaft / Winter Situation
+	•	Winterlandschaft / Winter Situation
 	°	Herbstwetter / Autumn Weather
-	°	
+	°	in der Werkhalle / in the production line  /// Maschinen, Gebläse, Laufband,
+	° ISS Raumstation (Schwerelosigkeit)
+	° 
+
+Störkräfte in Bezug auf die Feder
+ ° Ventilator / Klimaanlage: 	gerichteter Windstoss
+ ° Luftansaugung: starke Anziehung (sudden death)
+ ° Regen: erhöhtes Gewicht
+ ° Heizung / Ventilator: Trocknung nach Regen/Feuchtigkeit -- reduziertes Gewicht
+ ° Hecke: Barriere, leichter "Klebe" -Effekt
+ ° Kaugummi: starker Klebeeffekt (sudden death)
+ ° Marienkäfer AUF Feder: _kurzzeitig_ erhöhtes Gewicht
+ ° Gebäude: Windschatten
+ ° 
