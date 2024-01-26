@@ -72,7 +72,7 @@ class Application:
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
 
-        self.font = BitmapFont('gfx/heimatfont.png')
+        self.font = BitmapFont('gfx/heimatfont.png', font_w=8, font_h=8, scr_w=SCR_W, scr_h=SCR_H)
 
     def drawTile(self, tile, x, y):
         self.screen.blit(TILES[tile], (x * TILE_W - self.cam_x, y * TILE_H - self.cam_y))
