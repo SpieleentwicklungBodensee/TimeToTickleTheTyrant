@@ -6,7 +6,7 @@ Name:
 Landschaften
 	•	Stadt / City
 	•	Bauernhof, Land / Farm
-	•	Mond / Moon
+	•	Mond / Moon (reduzierte Schwerkraft)
 	•	Winterlandschaft / Winter Situation
 	°	Herbstwetter / Autumn Weather
 	°	in der Werkhalle / in the production line  /// Maschinen, Gebläse, Laufband,
@@ -21,5 +21,8 @@ Störkräfte in Bezug auf die Feder
  ° Hecke: Barriere, leichter "Klebe" -Effekt
  ° Kaugummi: starker Klebeeffekt (sudden death)
  ° Marienkäfer AUF Feder: _kurzzeitig_ erhöhtes Gewicht
- ° Gebäude: Windschatten
+ ° Gebäude: Windschatten, Barriere, Dach=Boden=death?
+ ° Windhose: Auftrieb
+ ° Schornstein: Auftrieb UND Trocknung (reduziertes Gewicht)
+ ° Feuer: Verbrennen (WENN NICHT vorher feucht); SONST Trocknung
  °
