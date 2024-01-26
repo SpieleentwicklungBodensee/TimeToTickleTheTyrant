@@ -215,7 +215,7 @@ class Application:
             elif e.type == pygame.QUIT:
                 self.running = False
 
-    def update(self):
+    def update(self, dt):
         self.updateCamera()
         self.updateFeather()
 
@@ -223,14 +223,18 @@ class Application:
         self.running = True
 
         clock = pygame.time.Clock()
+        dt = 0
 
         while self.running:
+            t = time.time()
+
             self.render()
             self.controls()
-            self.update()
+            self.update(dt)
 
             clock.tick(60)
             self.frame_cnt += 1
+            dt = time.time() - t
 
         pygame.quit()
 
