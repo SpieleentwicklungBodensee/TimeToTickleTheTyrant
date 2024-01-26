@@ -52,6 +52,7 @@ class Application:
 
         self.cam_x = 0
         self.cam_y = 0
+        self.mouse_pos = (0, 0)
 
         self.scroll_xdir = 0
         self.scroll_ydir = 0
@@ -64,7 +65,7 @@ class Application:
 
     def loadLevel(self, level_name):
         print('loading level: ' + str(level_name))
-        with open("levels/{}.lvl".format(level_name)) as f:
+        with open(f"levels/{level_name}.lvl") as f:
             self.level = [line.strip() for line in f.readlines()]   # note: levels should always contain a border!
         self.lev_w = len(self.level[0])
         self.lev_h = len(self.level)
@@ -80,7 +81,13 @@ class Application:
 
         if type(t) is tuple:
             t = t[0] if int(time.time() * 1000) % 500 < 250 else t[1]
-        self.screen.blit(t, (x * TILE_W - self.cam_x, y * TILE_H - self.cam_y))
+        self.screen.blit(t, self.gridToScreen(x, y))
+
+    def gridToScreen(self, x, y):
+        return x * TILE_W - self.cam_x, y * TILE_H - self.cam_y
+
+    def screenToGrid(self, x, y):
+        return (x + self.cam_x) // TILE_W, (y + self.cam_y) // TILE_H
 
     def updateCamera(self):
         self.cam_x += self.scroll_xdir * SCROLL_SPEED
@@ -106,15 +113,17 @@ class Application:
                 if tile in TILES:
                     self.drawTile(tile, x, y)
 
+        self.font.drawText(self.screen, 'LEV %02i' % self.level_i, x=1, y=1)
         self.font.centerText(self.screen, 'WASD = SCROLL AROUND', y=5)
         self.font.centerText(self.screen, 'F1/F2 = PREV/NEXT LEVEL', y=7)
-        self.font.drawText(self.screen, 'LEV %02i' % self.level_i, x=1, y=1)
+        self.font.centerText(self.screen, str(self.screenToGrid(*self.mouse_pos)), y=9)
 
         pygame.display.flip()
 
     def controls(self):
         events = pygame.event.get()
         modstate = pygame.key.get_mods()
+        self.mouse_pos = pygame.mouse.get_pos()
 
         for e in events:
             if e.type == pygame.KEYDOWN:
