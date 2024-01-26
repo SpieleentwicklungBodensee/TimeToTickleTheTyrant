@@ -9,7 +9,7 @@ class Application():
 
         self.running = False
 
-        self.screen = pygame.display.set_mode((SCR_W, SCR_H))
+        self.screen = pygame.display.set_mode((SCR_W, SCR_H), flags=pygame.FULLSCREEN|pygame.SCALED)
 
     def render(self):
         self.screen.fill((255, 0, 0))
