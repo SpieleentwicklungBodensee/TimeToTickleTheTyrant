@@ -15,7 +15,6 @@ try:
     from settings import *
 except ImportError:
     FULLSCREEN = False
-    SCALED = False
 
 
 SCR_W, SCR_H = 640, 360
@@ -40,15 +39,11 @@ class Application:
         self.lev_w = 0
         self.lev_h = 0
         self.level_amount = len(os.listdir("./levels"))
-        flags = 0
+
+        flags = pygame.SCALED | pygame.RESIZABLE
 
         if FULLSCREEN:
-            if SCALED:
-                flags = pygame.FULLSCREEN | pygame.SCALED
-            # no fullscreen if not SCALED
-        else:
-            if SCALED:
-                flags = pygame.SCALED
+            flags |= pygame.FULLSCREEN
 
         self.screen = pygame.display.set_mode((SCR_W, SCR_H), flags=flags)
 
