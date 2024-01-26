@@ -25,4 +25,5 @@ Störkräfte in Bezug auf die Feder
  ° Windhose: Auftrieb
  ° Schornstein: Auftrieb UND Trocknung (reduziertes Gewicht)
  ° Feuer: Verbrennen (WENN NICHT vorher feucht); SONST Trocknung
- °
+ ° Fließband: transportiert Feder horizontal, mit Schwung
+ ° 
