@@ -35,7 +35,7 @@ Störkräfte in Bezug auf die Feder
  ° Gebäude: Windschatten, Barriere, Dach=Boden=death?
  ° Windhose: Auftrieb
  ° Schornstein: Auftrieb UND Trocknung (reduziertes Gewicht)
- ° Feuer: Verbrennen (WENN NICHT vorher feucht); SONST Trocknung
+ ° Feuer: Verbrennen = sudden death (WENN NICHT vorher feucht); SONST Trocknung
  ° Fließband: transportiert Feder horizontal, mit Schwung
  ° Antenne: U-förmige Sackgassen für Feder
  ° offenes Wohnungsfenster: random sudden death
@@ -44,4 +44,3 @@ Störkräfte in Bezug auf die Feder
  ° Tischkreissäge (Werkstatt)
  ° Lackierdüse: Klebwirkung (BRAUCHT: Wasser ODER Lösungsmittel)
  ° Pinselreiniger: Lösungsmittel (NACH Lackierdüse)
- 
