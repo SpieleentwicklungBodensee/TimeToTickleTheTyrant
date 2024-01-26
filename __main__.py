@@ -61,6 +61,7 @@ class Application:
 
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
+        TILES['F'] = pygame.image.load('gfx/tile_feet.png')
 
         self.font = BitmapFont('gfx/heimatfont.png', font_w=8, font_h=8, scr_w=SCR_W, scr_h=SCR_H)
 
