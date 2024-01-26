@@ -29,10 +29,10 @@ Störkräfte in Bezug auf die Feder
  ° Luftansaugung: starke Anziehung (sudden death) ODER Feder fliegt in einer Röhre durch das Gebäude und kommt an der anderen Seite wieder raus
  ° Regen: erhöhtes Gewicht
  ° Heizung / Ventilator: Trocknung nach Regen/Feuchtigkeit -- reduziertes Gewicht
- ° Hecke: Barriere, leichter "Klebe" -Effekt
+ ° Hecke: Barriere, leichter "Klett"- oder"Klebe"-Effekt
  ° Kaugummi: starker Klebeeffekt (sudden death)
  ° Marienkäfer AUF Feder: _kurzzeitig_ erhöhtes Gewicht
- ° Gebäude: Windschatten, Barriere, Dach=Boden=death?
+ ° Gebäude: Windschatten, Barriere, Dach = Boden = sudden death?
  ° Windhose: Auftrieb
  ° Schornstein: Auftrieb UND Trocknung (reduziertes Gewicht)
  ° Feuer: Verbrennen = sudden death (WENN NICHT vorher feucht); SONST Trocknung
