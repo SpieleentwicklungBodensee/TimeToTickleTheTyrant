@@ -34,7 +34,7 @@ LEVEL = ['################################',
          '#      #   #   #   #   #       #',
          '#                              #',
          '#                              #',
-         '#                              #',
+         '#########    ###################',
          '#                              #',
          '#                              #',
          '#                              #',
@@ -44,6 +44,8 @@ LEVEL = ['################################',
 
 LEV_W = len(LEVEL[0])
 LEV_H = len(LEVEL)
+
+SCROLL_SPEED = 4
 
 
 class Application:
@@ -69,6 +71,9 @@ class Application:
         self.cam_x = 0
         self.cam_y = 0
 
+        self.scroll_xdir = 0
+        self.scroll_ydir = 0
+
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
 
@@ -76,6 +81,19 @@ class Application:
 
     def drawTile(self, tile, x, y):
         self.screen.blit(TILES[tile], (x * TILE_W - self.cam_x, y * TILE_H - self.cam_y))
+
+    def updateCamera(self):
+        self.cam_x += self.scroll_xdir * SCROLL_SPEED
+        self.cam_y += self.scroll_ydir * SCROLL_SPEED
+
+        if self.cam_x < 0:
+            self.cam_x = 0
+        if self.cam_x > LEV_W * TILE_W - SCR_W:
+            self.cam_x = LEV_W * TILE_W - SCR_W
+        if self.cam_y < 0:
+            self.cam_y = 0
+        if self.cam_y > LEV_H * TILE_H - SCR_H:
+            self.cam_y = LEV_H * TILE_H - SCR_H
 
     def render(self):
         self.screen.fill((40, 60, 80))
@@ -89,6 +107,7 @@ class Application:
                     self.drawTile(tile, x, y)
 
         self.font.centerText(self.screen, 'THIS IS A TEST', y=5)
+        self.font.centerText(self.screen, 'WASD = SCROLL AROUND', y=7)
 
         pygame.display.flip()
 
@@ -108,14 +127,34 @@ class Application:
                     if modstate & pygame.KMOD_ALT:
                         pygame.display.toggle_fullscreen()
 
+                elif e.key == pygame.K_w:
+                    self.scroll_ydir = -1
+                elif e.key == pygame.K_s:
+                    self.scroll_ydir = 1
+                elif e.key == pygame.K_a:
+                    self.scroll_xdir = -1
+                elif e.key == pygame.K_d:
+                    self.scroll_xdir = 1
+
+            elif e.type == pygame.KEYUP:
+                if e.key == pygame.K_w:
+                    if self.scroll_ydir < 0:
+                        self.scroll_ydir = 0
+                elif e.key == pygame.K_s:
+                    if self.scroll_ydir > 0 :
+                        self.scroll_ydir = 0
+                elif e.key == pygame.K_a:
+                    if self.scroll_xdir < 0:
+                        self.scroll_xdir = 0
+                elif e.key == pygame.K_d:
+                    if self.scroll_xdir > 0:
+                        self.scroll_xdir = 0
+
             elif e.type == pygame.QUIT:
                 self.running = False
 
     def update(self):
-        self.cam_x += 4
-
-        if self.cam_x > LEV_W * TILE_W:
-            self.cam_x = -LEV_W * TILE_W
+        self.updateCamera()
 
     def run(self):
         self.running = True
