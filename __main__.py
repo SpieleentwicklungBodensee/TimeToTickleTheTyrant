@@ -12,8 +12,8 @@ SCR_W, SCR_H = 640, 360
 
 TILES = {}
 
-TILE_W = 16
-TILE_H = 16
+TILE_W = 32
+TILE_H = 32
 
 
 LEVEL = ['################################',
@@ -48,11 +48,17 @@ class Application:
 
         self.loadGraphics()
 
+        self.cam_x = 0
+        self.cam_y = 0
+
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
 
+    def drawTile(self, tile, x, y):
+        self.screen.blit(TILES[tile], (x * TILE_W - self.cam_x, y * TILE_H - self.cam_y))
+
     def render(self):
-        self.screen.fill((0, 0, 0))
+        self.screen.fill((40, 60, 80))
 
         # render level
         for y in range(LEV_H):
@@ -60,7 +66,8 @@ class Application:
                 tile = LEVEL[y][x]
 
                 if tile in TILES:
-                    self.screen.blit(TILES[tile], (x * TILE_W, y * TILE_H))
+                    #self.screen.blit(TILES[tile], (x * TILE_W, y * TILE_H))
+                    self.drawTile(tile, x, y)
 
         pygame.display.flip()
 
@@ -84,15 +91,22 @@ class Application:
                 self.running = False
 
     def update(self):
-        pass
+        self.cam_x += 4
+
+        if self.cam_x > LEV_W * TILE_W:
+            self.cam_x = -LEV_W * TILE_W
 
     def run(self):
         self.running = True
+
+        clock = pygame.time.Clock()
 
         while self.running:
             self.render()
             self.controls()
             self.update()
+
+            clock.tick(60)
 
         pygame.quit()
 
