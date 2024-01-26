@@ -154,7 +154,6 @@ class Application:
         self.font.drawText(self.screen, 'LEV %02i' % self.level_i, x=1, y=1)
         self.font.centerText(self.screen, 'WASD = SCROLL AROUND', y=5)
         self.font.centerText(self.screen, 'F1/F2 = PREV/NEXT LEVEL', y=7)
-        self.font.centerText(self.screen, str(self.screenToGrid(*self.mouse_pos)), y=9)
 
         pygame.display.flip()
 
@@ -193,6 +192,10 @@ class Application:
                     self.scroll_xdir = -1
                 elif e.key == pygame.K_d:
                     self.scroll_xdir = 1
+
+            elif e.type == pygame.MOUSEBUTTONUP:
+                # TODO do relevant things on mouse click
+                print(f"clicked on grid position: {self.screenToGrid(*self.mouse_pos)}")
 
             elif e.type == pygame.KEYUP:
                 if e.key == pygame.K_w:
