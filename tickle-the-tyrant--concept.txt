@@ -1,21 +1,32 @@
 Name:
 	⁃	Der König möge nun lachen
 	⁃	Tickle the King
-	⁃	time to tickle the tyrant
+	⁃	_time to tickle the tyrant_
+
+
+
+
 
 Landschaften
 	•	Stadt / City
 	•	Bauernhof, Land / Farm
+	° Bauernhof Scheune/Heuboden
 	•	Mond / Moon (reduzierte Schwerkraft)
-	•	Winterlandschaft / Winter Situation
-	°	Herbstwetter / Autumn Weather
+	° Garten /Garden
+	•		Garten, Winterlandschaft / Winter Situation
+	°		Garten, Herbstwetter  / Autumn Weather
 	°	in der Werkhalle / in the production line  /// Maschinen, Gebläse, Laufband,
 	° ISS Raumstation (Schwerelosigkeit)
-	°
+	° WG-Wohnung / student´s flat
+	° Keller/Werkstatt/Garage
+	° 
+
+
+
 
 Störkräfte in Bezug auf die Feder
  ° Ventilator / Klimaanlage: 	gerichteter Windstoss
- ° Luftansaugung: starke Anziehung (sudden death) - ODER Feder fliegt durch Röhre und kommt an anderer Stelle raus
+ ° Luftansaugung: starke Anziehung (sudden death) ODER Feder fliegt in einer Röhre durch das Gebäude und kommt an der anderen Seite wieder raus
  ° Regen: erhöhtes Gewicht
  ° Heizung / Ventilator: Trocknung nach Regen/Feuchtigkeit -- reduziertes Gewicht
  ° Hecke: Barriere, leichter "Klebe" -Effekt
@@ -26,4 +37,11 @@ Störkräfte in Bezug auf die Feder
  ° Schornstein: Auftrieb UND Trocknung (reduziertes Gewicht)
  ° Feuer: Verbrennen (WENN NICHT vorher feucht); SONST Trocknung
  ° Fließband: transportiert Feder horizontal, mit Schwung
- ° 
+ ° Antenne: U-förmige Sackgassen für Feder
+ ° offenes Wohnungsfenster: random sudden death
+ ° Lüftungskanäle: Abkürzung - Feder fliegt durch Röhre und kommt an anderer Stelle raus
+ ° Lüftungskanäle MIT Lüfter-Antrieb: sudden death
+ ° Tischkreissäge (Werkstatt)
+ ° Lackierdüse: Klebwirkung (BRAUCHT: Wasser ODER Lösungsmittel)
+ ° Pinselreiniger: Lösungsmittel (NACH Lackierdüse)
+ 
