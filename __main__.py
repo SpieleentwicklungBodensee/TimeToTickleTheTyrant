@@ -35,8 +35,6 @@ class Application:
         self.running = False
         self.frame_cnt = 0
 
-        self.screen = pygame.display.set_mode((SCR_W, SCR_H),
-                                              flags=pygame.FULLSCREEN | pygame.SCALED)
         self.level_i = 1
         self.level = []
         self.lev_w = 0
@@ -62,6 +60,9 @@ class Application:
 
         self.feather_anim_cnt = 0
         self.feather_anim_dir = 1
+        self.feather_anim_speed = 8     # lower means faster
+        self.feather_anim_rot = 0
+        self.feather_anim_rot_dir = 2
 
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
@@ -120,13 +121,19 @@ class Application:
             self.cam_y = self.lev_h * TILE_H - SCR_H
 
     def updateFeather(self):
-        if self.frame_cnt % 8 == 0:
+        if self.frame_cnt % self.feather_anim_speed == 0:
             self.feather_anim_cnt += self.feather_anim_dir
 
             self.feather_anim_cnt %= 8
 
             if int(random.random() * 8) == 0:
                 self.feather_anim_dir *= -1
+
+        self.feather_anim_rot += self.feather_anim_rot_dir
+        self.feather_anim_rot %= 360
+
+        if int(random.random() * 60) == 0:
+            self.feather_anim_rot_dir *= -1
 
     def render(self):
         self.screen.fill((40, 60, 80))
@@ -141,6 +148,7 @@ class Application:
 
         # render feather
         feather = FEATHERS[self.feather_anim_cnt]
+        feather = pygame.transform.rotate(feather, self.feather_anim_rot)
         self.screen.blit(feather, (128, 64))
 
         self.font.drawText(self.screen, 'LEV %02i' % self.level_i, x=1, y=1)
