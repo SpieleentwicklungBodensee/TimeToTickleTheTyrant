@@ -6,6 +6,7 @@
 ######################
 
 import pygame
+from bitmapfont import BitmapFont
 
 try:
     from settings import *
@@ -71,6 +72,8 @@ class Application:
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
 
+        self.font = BitmapFont('gfx/heimatfont.png')
+
     def drawTile(self, tile, x, y):
         self.screen.blit(TILES[tile], (x * TILE_W - self.cam_x, y * TILE_H - self.cam_y))
 
@@ -84,6 +87,8 @@ class Application:
 
                 if tile in TILES:
                     self.drawTile(tile, x, y)
+
+        self.font.centerText(self.screen, 'THIS IS A TEST', y=5)
 
         pygame.display.flip()
 
