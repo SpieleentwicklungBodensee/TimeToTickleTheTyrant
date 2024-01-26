@@ -10,6 +10,34 @@ import pygame
 SCR_W, SCR_H = 640, 360
 
 
+TILES = {}
+
+TILE_W = 16
+TILE_H = 16
+
+
+LEVEL = ['################################',
+         '#                              #',
+         '#                              #',
+         '#                              #',
+         '#     ### ### ### ### ###      #',
+         '#      #   #   #   #   #       #',
+         '#      #   #   #   #   #       #',
+         '#      #   #   #   #   #       #',
+         '#                              #',
+         '#                              #',
+         '#                              #',
+         '#                              #',
+         '#                              #',
+         '#                              #',
+         '#                              #',
+         '################################',
+         ]
+
+LEV_W = len(LEVEL[0])
+LEV_H = len(LEVEL)
+
+
 class Application:
     def __init__(self):
         pygame.init()
@@ -18,8 +46,21 @@ class Application:
 
         self.screen = pygame.display.set_mode((SCR_W, SCR_H), flags=pygame.FULLSCREEN|pygame.SCALED)
 
+        self.loadGraphics()
+
+    def loadGraphics(self):
+        TILES['#'] = pygame.image.load('gfx/tile_wall.png')
+
     def render(self):
-        self.screen.fill((255, 0, 0))
+        self.screen.fill((0, 0, 0))
+
+        # render level
+        for y in range(LEV_H):
+            for x in range(LEV_W):
+                tile = LEVEL[y][x]
+
+                if tile in TILES:
+                    self.screen.blit(TILES[tile], (x * TILE_W, y * TILE_H))
 
         pygame.display.flip()
 
