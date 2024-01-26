@@ -6,6 +6,7 @@ class Fluid:
         self.height = height
         self.velocity = np.zeros(shape=(width, height, 2))
         self.space = np.zeros(shape=(width, height))
+        self.remainingTime = 0.0
 
     def solveIncompressibility(self):
         for y in range(1, self.height - 1):
@@ -30,7 +31,12 @@ class Fluid:
                 self.velocity[x, y + 1, 1] += self.space[x, y + 1] * p
 
     def simulate(self, dt):
-        for i in range(100):
+        stepsPerSecond = 100
+
+        steps = int((dt + self.remainingTime) * stepsPerSecond)
+        self.remainingTime = (dt + self.remainingTime) - steps / stepsPerSecond
+
+        for i in range(steps):
             self.solveIncompressibility()
         #self.extrapolate()
         #self.advectVelocity()
