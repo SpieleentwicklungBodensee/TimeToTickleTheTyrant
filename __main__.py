@@ -66,7 +66,6 @@ class Application:
                 tile = LEVEL[y][x]
 
                 if tile in TILES:
-                    #self.screen.blit(TILES[tile], (x * TILE_W, y * TILE_H))
                     self.drawTile(tile, x, y)
 
         pygame.display.flip()
