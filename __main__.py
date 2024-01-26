@@ -71,6 +71,10 @@ class Application:
 
         self.fluid = Fluid(self.lev_w, self.lev_h)
 
+        for y in range(self.lev_h):
+            for x in range(self.lev_w):
+                self.fluid.space[x, y] = 0.0 if self.level[y][x] == '#' else 1.0
+
     def drawTile(self, tile, x, y):
         t = TILES[tile]
 
