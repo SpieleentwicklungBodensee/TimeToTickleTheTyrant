@@ -39,6 +39,9 @@ class Application:
                     if modstate & pygame.KMOD_ALT:
                         pygame.display.toggle_fullscreen()
 
+            elif e.type == pygame.QUIT:
+                self.running = False
+
     def update(self):
         pass
 
