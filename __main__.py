@@ -3,7 +3,7 @@ import pygame
 SCR_W, SCR_H = 640, 360
 
 
-class Application():
+class Application:
     def __init__(self):
         pygame.init()
 
@@ -18,11 +18,19 @@ class Application():
 
     def controls(self):
         events = pygame.event.get()
+        modstate = pygame.key.get_mods()
 
         for e in events:
             if e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_ESCAPE:
                     self.running = False
+
+                if e.key == pygame.K_F11:
+                    pygame.display.toggle_fullscreen()
+
+                if e.key == pygame.K_RETURN:
+                    if modstate & pygame.KMOD_ALT:
+                        pygame.display.toggle_fullscreen()
 
     def update(self):
         pass
