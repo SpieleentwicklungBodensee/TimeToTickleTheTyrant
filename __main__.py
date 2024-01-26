@@ -9,6 +9,7 @@ import pygame
 import os
 from bitmapfont import BitmapFont
 import time
+import random
 from Fluid import Fluid
 
 try:
@@ -20,6 +21,7 @@ except ImportError:
 SCR_W, SCR_H = 640, 360
 
 TILES = {}
+FEATHERS = []
 
 TILE_W = 32
 TILE_H = 32
@@ -31,6 +33,7 @@ class Application:
         pygame.init()
 
         self.running = False
+        self.frame_cnt = 0
 
         self.screen = pygame.display.set_mode((SCR_W, SCR_H),
                                               flags=pygame.FULLSCREEN | pygame.SCALED)
@@ -57,9 +60,23 @@ class Application:
         self.scroll_xdir = 0
         self.scroll_ydir = 0
 
+        self.feather_anim_cnt = 0
+        self.feather_anim_dir = 1
+
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
         TILES['F'] = (pygame.image.load('gfx/tile_feet.png'), pygame.image.load('gfx/tile_feet2.png'))
+
+        global FEATHERS
+        FEATHERS += [pygame.image.load('gfx/feather1.png'),
+                     pygame.image.load('gfx/feather2.png'),
+                     pygame.image.load('gfx/feather3.png'),
+                     pygame.image.load('gfx/feather4.png'),
+                     pygame.image.load('gfx/feather5.png'),
+                     pygame.image.load('gfx/feather6.png'),
+                     pygame.image.load('gfx/feather7.png'),
+                     pygame.image.load('gfx/feather8.png'),
+                     ]
 
         self.font = BitmapFont('gfx/heimatfont.png', font_w=8, font_h=8, scr_w=SCR_W, scr_h=SCR_H)
 
@@ -102,6 +119,15 @@ class Application:
         if self.cam_y > self.lev_h * TILE_H - SCR_H:
             self.cam_y = self.lev_h * TILE_H - SCR_H
 
+    def updateFeather(self):
+        if self.frame_cnt % 8 == 0:
+            self.feather_anim_cnt += self.feather_anim_dir
+
+            self.feather_anim_cnt %= 8
+
+            if int(random.random() * 8) == 0:
+                self.feather_anim_dir *= -1
+
     def render(self):
         self.screen.fill((40, 60, 80))
 
@@ -112,6 +138,10 @@ class Application:
 
                 if tile in TILES:
                     self.drawTile(tile, x, y)
+
+        # render feather
+        feather = FEATHERS[self.feather_anim_cnt]
+        self.screen.blit(feather, (128, 64))
 
         self.font.drawText(self.screen, 'LEV %02i' % self.level_i, x=1, y=1)
         self.font.centerText(self.screen, 'WASD = SCROLL AROUND', y=5)
@@ -175,6 +205,7 @@ class Application:
 
     def update(self):
         self.updateCamera()
+        self.updateFeather()
 
     def run(self):
         self.running = True
@@ -187,6 +218,7 @@ class Application:
             self.update()
 
             clock.tick(60)
+            self.frame_cnt += 1
 
         pygame.quit()
 
