@@ -8,6 +8,7 @@
 import pygame
 import os
 from bitmapfont import BitmapFont
+import numpy as np
 
 try:
     from settings import *
@@ -71,6 +72,13 @@ class Application:
             self.level = [line.strip() for line in f.readlines()]   # note: levels should always contain a border!
         self.lev_w = len(self.level[0])
         self.lev_h = len(self.level)
+
+        self.velocity = np.zeros(shape=(self.lev_w, self.lev_h, 2))
+        self.space = np.zeros(shape=(self.lev_w, self.lev_h))
+
+        for y in range(self.lev_h):
+            for x in range(self.lev_w):
+                self.space[x, y] = 0.0 if self.level[y][x] == '#' else 1.0
 
     def drawTile(self, tile, x, y):
         self.screen.blit(TILES[tile], (x * TILE_W - self.cam_x, y * TILE_H - self.cam_y))
