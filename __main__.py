@@ -43,7 +43,7 @@ class Application:
         self.lev_h = 0
         self.level_amount = len(os.listdir("./levels"))
 
-        flags = pygame.SCALED | pygame.RESIZABLE
+        flags = pygame.SCALED
 
         if FULLSCREEN:
             flags |= pygame.FULLSCREEN
