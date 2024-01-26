@@ -11,15 +11,15 @@ Landschaften
 	°	Herbstwetter / Autumn Weather
 	°	in der Werkhalle / in the production line  /// Maschinen, Gebläse, Laufband,
 	° ISS Raumstation (Schwerelosigkeit)
-	° 
+	°
 
 Störkräfte in Bezug auf die Feder
  ° Ventilator / Klimaanlage: 	gerichteter Windstoss
- ° Luftansaugung: starke Anziehung (sudden death)
+ ° Luftansaugung: starke Anziehung (sudden death) - ODER Feder fliegt durch Röhre und kommt an anderer Stelle raus
  ° Regen: erhöhtes Gewicht
  ° Heizung / Ventilator: Trocknung nach Regen/Feuchtigkeit -- reduziertes Gewicht
  ° Hecke: Barriere, leichter "Klebe" -Effekt
  ° Kaugummi: starker Klebeeffekt (sudden death)
  ° Marienkäfer AUF Feder: _kurzzeitig_ erhöhtes Gewicht
  ° Gebäude: Windschatten
- ° 
+ °
