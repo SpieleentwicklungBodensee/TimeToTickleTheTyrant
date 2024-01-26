@@ -152,6 +152,7 @@ class Application:
         self.screen.blit(feather, (128, 64))
 
         self.font.drawText(self.screen, 'LEV %02i' % self.level_i, x=1, y=1)
+        self.font.drawText(self.screen, '%02ix%02i' % (self.lev_w, self.lev_h), x=1, y=2)
         self.font.centerText(self.screen, 'WASD = SCROLL AROUND', y=5)
         self.font.centerText(self.screen, 'F1/F2 = PREV/NEXT LEVEL', y=7)
 
