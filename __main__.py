@@ -8,8 +8,8 @@
 import pygame
 import os
 from bitmapfont import BitmapFont
-import numpy as np
 import time
+from Fluid import Fluid
 
 try:
     from settings import *
@@ -69,8 +69,7 @@ class Application:
         self.lev_w = len(self.level[0])
         self.lev_h = len(self.level)
 
-        self.velocity = np.zeros(shape=(self.lev_w, self.lev_h, 2))
-        self.space = np.zeros(shape=(self.lev_w, self.lev_h))
+        self.fluid = Fluid(self.lev_w, self.lev_h)
 
         for y in range(self.lev_h):
             for x in range(self.lev_w):
