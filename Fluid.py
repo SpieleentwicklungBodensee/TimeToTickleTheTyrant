@@ -29,6 +29,15 @@ class Fluid:
                 self.velocity[x, y] -= np.array(self.space[x - 1, y], self.space[x, y - 1]) * p
                 self.velocity[x + 1, y, 0] += self.space[x + 1, y] * p
                 self.velocity[x, y + 1, 1] += self.space[x, y + 1] * p
+    
+    def extrapolate(self):
+        for x in range(self.width):
+            self.velocity[x, 0, 0] = self.velocity[x, 1, 0]
+            self.velocity[x, -1, 0] = self.velocity[x, -2, 0]
+
+        for y in range(self.height):
+            self.velocity[0, y, 1] = self.velocity[1, y, 1]
+            self.velocity[-1, y, 1] = self.velocity[-2, y, 1]
 
     def simulate(self, dt):
         stepsPerSecond = 100
@@ -38,5 +47,5 @@ class Fluid:
 
         for i in range(steps):
             self.solveIncompressibility()
-        #self.extrapolate()
+        self.extrapolate()
         #self.advectVelocity()
