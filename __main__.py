@@ -25,10 +25,10 @@ class Application:
                 if e.key == pygame.K_ESCAPE:
                     self.running = False
 
-                if e.key == pygame.K_F11:
+                elif e.key == pygame.K_F11:
                     pygame.display.toggle_fullscreen()
 
-                if e.key == pygame.K_RETURN:
+                elif e.key == pygame.K_RETURN:
                     if modstate & pygame.KMOD_ALT:
                         pygame.display.toggle_fullscreen()
 
