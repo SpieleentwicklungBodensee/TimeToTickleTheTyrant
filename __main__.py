@@ -9,6 +9,7 @@ import pygame
 import os
 from bitmapfont import BitmapFont
 import numpy as np
+import time
 
 try:
     from settings import *
@@ -62,7 +63,7 @@ class Application:
 
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
-        TILES['F'] = pygame.image.load('gfx/tile_feet.png')
+        TILES['F'] = (pygame.image.load('gfx/tile_feet.png'), pygame.image.load('gfx/tile_feet2.png'))
 
         self.font = BitmapFont('gfx/heimatfont.png', font_w=8, font_h=8, scr_w=SCR_W, scr_h=SCR_H)
 
@@ -81,7 +82,11 @@ class Application:
                 self.space[x, y] = 0.0 if self.level[y][x] == '#' else 1.0
 
     def drawTile(self, tile, x, y):
-        self.screen.blit(TILES[tile], (x * TILE_W - self.cam_x, y * TILE_H - self.cam_y))
+        t = TILES[tile]
+
+        if type(t) is tuple:
+            t = t[0] if int(time.time() * 1000) % 500 < 250 else t[1]
+        self.screen.blit(t, (x * TILE_W - self.cam_x, y * TILE_H - self.cam_y))
 
     def updateCamera(self):
         self.cam_x += self.scroll_xdir * SCROLL_SPEED
