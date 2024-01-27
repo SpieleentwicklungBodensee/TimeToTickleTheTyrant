@@ -105,6 +105,7 @@ class Application:
         TILES['-'] = pygame.image.load('gfx/tile_pipe_-.png')
         TILES['l'] = pygame.image.load('gfx/tile_pipe_l.png')
         TILES['X'] = (pygame.image.load('gfx/tile_grill1.png'), pygame.image.load('gfx/tile_grill2.png'), pygame.image.load('gfx/tile_grill3.png'))
+        TILES['Y'] = pygame.image.load('gfx/tile_plant.png')
         # TILES['I'] = pygame.image.load('gfx/tile_housetop_m.png')
         # TILES['J'] = pygame.image.load('gfx/tile_housetop_r.png')
 
