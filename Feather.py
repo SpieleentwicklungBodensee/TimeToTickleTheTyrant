@@ -48,8 +48,8 @@ class Feather:
         # self.v += a_wind
 
         drag_scalar = np.dot(self.v, self.v) * DRAG
-        v_norm = self.v / (np.linalg.norm(self.v) + 1e-16)
-        drag_v_norm = np.array([element * -1 for element in v_norm])
+        v_norm = self.v / max(np.linalg.norm(self.v), 1e-16)
+        drag_v_norm = -v_norm
         drag_v = drag_v_norm * drag_scalar
         self.v += drag_v
 
