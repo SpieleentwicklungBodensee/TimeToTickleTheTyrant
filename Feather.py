@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 import random
 import pygame
@@ -5,7 +7,7 @@ import pygame
 
 GRAVITY = np.array([0., 16.])
 DRAG = .0005
-FEATHER_SPRITE_SIZE = 32
+COLLISION_BOX = 12
 
 
 class Feather:
@@ -55,9 +57,9 @@ class Feather:
         if self.isInWall(potential_pos):
             pot_x,pot_y = self.cam.worldToGrid(potential_pos[0], potential_pos[1])
             x,y = self.cam.worldToGrid(self.pos[0], self.pos[1])
-            if x - pot_x is not 0:  # when wall is hit, reset velocity
+            if x - pot_x != 0:  # when wall is hit, reset velocity
                 self.v = np.array([0., self.v[1]])
-            if y - pot_y is not 0:
+            if y - pot_y != 0:
                 self.v = np.array([self.v[0], 0.])
         else:
             self.pos = potential_pos
@@ -70,6 +72,9 @@ class Feather:
         screen.blit(feather, renderpos)
 
     def isInWall(self, potential_pos):
-        x,y = self.cam.worldToGrid(potential_pos[0], potential_pos[1])
+        collision_point = np.copy(potential_pos)
+        collision_point[0] += math.copysign(COLLISION_BOX, self.v[0])
+        collision_point[1] += math.copysign(COLLISION_BOX, self.v[1])
+        x,y = self.cam.worldToGrid(collision_point[0], collision_point[1])
         tile = self.level[y][x]
         return tile == "#"
