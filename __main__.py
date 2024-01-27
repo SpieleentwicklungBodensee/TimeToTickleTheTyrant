@@ -46,7 +46,7 @@ class Application:
         if FULLSCREEN:
             flags |= pygame.FULLSCREEN
 
-        self.screen = pygame.display.set_mode((SCR_W, SCR_H), flags=flags)
+        self.screen = pygame.display.set_mode((SCR_W, SCR_H), flags=flags,vsync=1)
 
         self.loadGraphics()
         self.loadLevel(self.level_i)
