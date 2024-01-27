@@ -9,7 +9,7 @@ import pygame
 import os
 
 import cam
-from Feather import Feather, FEATHER_SPRITE_SIZE
+from Feather import Feather
 from Cloud import Cloud
 from bitmapfont import BitmapFont
 import time
