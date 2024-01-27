@@ -70,14 +70,6 @@ class Feather:
 
         screen.blit(feather, renderpos)
 
-    def isInWall(self, potential_pos):
-        collision_point = np.copy(potential_pos)
-        collision_point[0] += math.copysign(COLLISION_RADIUS, self.v[0]) if self.v[0] != 0 else 0
-        collision_point[1] += math.copysign(COLLISION_RADIUS, self.v[1]) if self.v[1] != 0 else 0
-        x,y = self.cam.worldToGrid(collision_point[0], collision_point[1])
-        tile = self.level[y][x]
-        return tile == "#"
-
     def detectWall(self, potential_pos):
         collision_point = np.copy(potential_pos)
         collision_point[0] += math.copysign(COLLISION_RADIUS, self.v[0]) if self.v[0] != 0 else 0
