@@ -226,7 +226,7 @@ cdef class Fluid:
             v_x, v_y = self.sampleVelocity(x, y)
             v = sqrt(v_x**2 + v_y**2)
 
-            if v < minSpeed:
+            if v < minSpeed or v <= 0.0:
                 break
 
             x += v_x / v * segLen

@@ -198,7 +198,10 @@ class Application:
 
         self.screen.blit(self.smoke, (0, 0))
 
-    def showStreamLines(self):
+    def updateStreamLines(self):
+        if self.frame_cnt % 5 != 0:
+            return
+
         numSegs = 15
 
         minSpeed = 0.1
@@ -221,8 +224,10 @@ class Application:
                 if len(points) > 1:
                     points = [(self.cam.gridToScreen(x_, y_), v) for (x_, y_, v) in points]
                     points = [p[0] for p in points]
-                    pygame.draw.lines(self.streamLines, pygame.Color(255, 255, 255, 255), False, points)
+                    pygame.draw.aalines(self.streamLines, pygame.Color(255, 255, 255, 255), False, points)
 
+    def showStreamLines(self):
+        self.updateStreamLines()
         self.screen.blit(self.streamLines, (0, 0))
 
     def drawTile(self, tile, x, y):
