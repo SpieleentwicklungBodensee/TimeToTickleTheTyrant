@@ -133,11 +133,11 @@ class Application:
         self.cam_y = 0
 
         self.fluid = Fluid(self.lev_w + 2, self.lev_h + 2)
+        self.updateLevelWind()
 
         feather_spawn = None
         for y in range(self.lev_h):
             for x in range(self.lev_w):
-                self.fluid.space[x + 1, y + 1] = 0 if self.level[y][x] == '#' else 1
                 if self.level[y][x] == "*":  # look for feather spawn
                     feather_spawn = (x, y)
 
@@ -147,6 +147,14 @@ class Application:
             self.feather = Feather()
             self.feather.pos = self.gridToScreen(*feather_spawn)
 
+    def updateLevelWind(self):
+        for y in range(self.lev_h):
+            for x in range(self.lev_w):
+                if self.level[y][x] == '#':
+                    self.fluid.space[x + 1, y + 1] = 0
+                    self.fluid.velocity[x, y] = (0.0, 0.0)
+                else:
+                    self.fluid.space[x + 1, y + 1] = 1
 
     def saveLevel(self, level_name):
         print('saving level: ' + str(level_name))
