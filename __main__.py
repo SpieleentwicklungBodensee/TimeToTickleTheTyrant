@@ -92,6 +92,10 @@ class Application:
         TILES['i'] = pygame.image.load('gfx/tile_house_m.png')
         TILES['j'] = pygame.image.load('gfx/tile_house_r.png')
         TILES['H'] = pygame.image.load('gfx/tile_housetop_l.png')
+        TILES['d'] = pygame.image.load('gfx/tile_pip_d.png')
+        TILES['b'] = pygame.image.load('gfx/tile_pip_b.png')
+        TILES['q'] = pygame.image.load('gfx/tile_pip_q.png')
+        TILES['p'] = pygame.image.load('gfx/tile_pip_p.png')
         # TILES['I'] = pygame.image.load('gfx/tile_housetop_m.png')
         # TILES['J'] = pygame.image.load('gfx/tile_housetop_r.png')
 
