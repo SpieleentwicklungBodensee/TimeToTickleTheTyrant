@@ -58,10 +58,12 @@ class Feather:
     def updatePosition(self, dt):
         potential_pos = self.pos + self.v * dt
         if self.isInWall(potential_pos):
-            # pot_x,pot_y = self.cam.worldToGrid(potential_pos[0], potential_pos[1])
-            # x,y = self.cam.worldToGrid(self.pos[0], self.pos[1])
-            # print(f"Xdiff: {x - pot_x}   -   Ydiff: {y-pot_y}")
-            pass
+            pot_x,pot_y = self.cam.worldToGrid(potential_pos[0], potential_pos[1])
+            x,y = self.cam.worldToGrid(self.pos[0], self.pos[1])
+            if x - pot_x is not 0:  # when wall is hit, reset velocity
+                self.v = np.array([0., self.v[1]])
+            if y - pot_y is not 0:
+                self.v = np.array([self.v[0], 0.])
         else:
             self.pos = potential_pos
 
