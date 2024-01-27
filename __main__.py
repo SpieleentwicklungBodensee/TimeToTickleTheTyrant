@@ -146,7 +146,7 @@ class Application:
         self.lev_h = len(self.level)
         self.cam.reset()
 
-        self.fluid = Fluid(self.lev_w + 2, self.lev_h + 2)
+        self.fluid = Fluid(self.lev_w, self.lev_h)
         self.smoke = pygame.Surface((TILE_W * self.lev_w, TILE_H * self.lev_h), pygame.SRCALPHA)
         self.updateLevelWind()
 
@@ -168,10 +168,10 @@ class Application:
         for y in range(self.lev_h):
             for x in range(self.lev_w):
                 if self.level[y][x] == '#':
-                    self.fluid.setSpace(x + 1, y + 1, 0)
-                    self.fluid.setVelocity(x + 1, y + 1, (0.0, 0.0))
+                    self.fluid.setSpace(x, y, 0)
+                    self.fluid.setVelocity(x, y, (0.0, 0.0))
                 else:
-                    self.fluid.setSpace(x + 1, y + 1, 1)
+                    self.fluid.setSpace(x, y, 1)
 
     def saveLevel(self, level_name):
         print('saving level: ' + str(level_name))
@@ -207,10 +207,7 @@ class Application:
                 y = j + 0.5
 
                 points = []
-                for (x_, y_) in self.fluid.getStreamLine(x + 1, y + 1, 15, 0.1):
-                    x_ = x_ - 1
-                    y_ = y_ - 1
-
+                for (x_, y_) in self.fluid.getStreamLine(x, y, 15, 0.1):
                     if x_ >= self.lev_w or y_ >= self.lev_h:
                         continue
 
@@ -271,7 +268,6 @@ class Application:
 
         # show wind
         if SHOW_STREAMLINES:
-            #self.fluid.setVelocity(3, 3, (10, 4))
             #self.fluid.smoke[3, 3] = 1.0
             self.showStreamLines()
             #self.showSmoke()
@@ -432,7 +428,7 @@ class Application:
 
         if self.cloud.isBlowing():
             cx, cy = self.cam.screenToGrid(self.mouse_pos[0] + TILE_W * 0.5, self.mouse_pos[1] + TILE_H * 0.5)
-            self.fluid.setVelocity(cx +1, cy +1, (4 * self.cloud.getLookDirection(), 0))
+            self.fluid.setVelocity(cx, cy, (4 * self.cloud.getLookDirection(), 0))
 
             self.debugTilePos = (cx, cy)
         else:

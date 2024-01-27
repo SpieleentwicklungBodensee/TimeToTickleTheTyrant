@@ -41,7 +41,7 @@ class Feather:
         self.v += (dt * GRAVITY)
 
         # x, y = self.cam.screenToGrid(self.pos[0], self.pos[1])
-        # v_wind = fluid.sampleVelocity(x + 1, y + 1)  # +1 for fluid grid offset
+        # v_wind = fluid.sampleVelocity(x, y)
         # print(v_wind)
         # a_wind = np.array(v_wind) * DRAG
         #

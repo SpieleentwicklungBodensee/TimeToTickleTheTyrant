@@ -20,19 +20,19 @@ cdef class Fluid:
     cdef double remainingTime
 
     def __init__(self, width, height):
-        self.width = width
-        self.height = height
+        self.width = width + 2
+        self.height = height + 2
         self.velocity = np.zeros(shape=(width, height, 2))
         self.space = np.ones(shape=(width, height), dtype=np.int8)
         self.smoke = np.zeros(shape=(width, height))
         self.remainingTime = 0.0
 
-    def setSpace(self, x, y, s):
-        self.space[x, y] = s
+    def setSpace(self, int x, int y, s):
+        self.space[x + 1, y + 1] = s
 
-    def setVelocity(self, x, y, v):
-        self.velocity[x, y, 0] = v[0]
-        self.velocity[x, y, 1] = v[1]
+    def setVelocity(self, int x, int y, v):
+        self.velocity[x + 1, y + 1, 0] = v[0]
+        self.velocity[x + 1, y + 1, 1] = v[1]
 
     cdef solveIncompressibility(self):
         cdef int x, y, s
@@ -128,7 +128,7 @@ cdef class Fluid:
         self.advectVelocity(dt)
         #self.advectSmoke(dt)
 
-    cpdef float sampleField(self, float x, float y, field):
+    cdef float sampleField(self, float x, float y, field):
         cdef uint32_t x0, y0
 
         x -= 0.5
@@ -160,6 +160,8 @@ cdef class Fluid:
     cpdef (float, float) sampleVelocity(self, float x, float y):
         cdef uint32_t x0, y0
 
+        x += 1
+        y += 1
         x -= 0.5
         y -= 0.5
 
