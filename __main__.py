@@ -423,8 +423,11 @@ class Application:
     def update(self, dt):
         self.fluid.simulate(dt)
         self.updateCamera()
+
+        self.cloud.setPosition(self.mouse_pos[0] + self.cam.pos_x, self.mouse_pos[1] + self.cam.pos_y)
+
         self.feather.update(dt, self.frame_cnt, self.fluid)
-        self.cloud.update(dt, self.frame_cnt)
+        self.cloud.update(dt, self.frame_cnt, self.feather)
 
         if self.cloud.isBlowing():
             cx, cy = self.cam.screenToGrid(self.mouse_pos[0] + TILE_W * 0.5, self.mouse_pos[1] + TILE_H * 0.5)
@@ -433,12 +436,6 @@ class Application:
             self.debugTilePos = (cx, cy)
         else:
             self.debugTilePos = None
-
-        self.cloud.setPosition(self.mouse_pos[0] + self.cam.pos_x, self.mouse_pos[1] + self.cam.pos_y)
-        if self.cloud.pos[0] < self.feather.pos[0]:
-            self.cloud.setLookDirection(1)
-        else:
-            self.cloud.setLookDirection(-1)
 
         if self.edit_mode:
             self.updateEdit()

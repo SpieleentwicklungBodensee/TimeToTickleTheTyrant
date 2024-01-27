@@ -1,6 +1,7 @@
 import numpy as np
 import random
 import pygame
+import math
 
 GRAVITY = np.array([0., 20.])
 DRAG = .0005
@@ -21,9 +22,10 @@ class Cloud:
 
         self.lookDirection = -1
 
-    def update(self, dt, frame_cnt):
+    def update(self, dt, frame_cnt, feather):
         self.update_phys(dt)
         self.updateAnimationData(frame_cnt)
+        self.updateRotation(feather)
 
     def updateAnimationData(self, frame_cnt):
         if (frame_cnt - self.frame_cnt_offset) % self.anim_speed != 0:
@@ -64,12 +66,22 @@ class Cloud:
         drag_v = drag_v_norm * drag_scalar
         self.v += drag_v
 
+    def updateRotation(self, feather):
+        angle = math.atan((self.pos[1] - feather.pos[1]) / (self.pos[0] - feather.pos[0]))
+        self.anim_rot = -math.degrees(angle)
+
+        if self.pos[0] < feather.pos[0]:
+            self.setLookDirection(1)
+        else:
+            self.setLookDirection(-1)
+
     def getRender(self):
         sprite = self.sprites[self.anim_cnt]
-        sprite = pygame.transform.rotate(sprite, self.anim_rot)
 
         if self.lookDirection > 0:
             sprite = pygame.transform.flip(sprite, True, False)
+
+        sprite = pygame.transform.rotate(sprite, self.anim_rot)
 
         return sprite
 
