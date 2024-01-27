@@ -4,14 +4,12 @@
 ###   THE TYRANT   ###
 ###                ###
 ######################
-import numpy as np
 import pygame
 import os
 
 from Feather import Feather
 from bitmapfont import BitmapFont
 import time
-import random
 from Fluid import Fluid
 import math
 
@@ -53,7 +51,7 @@ class Application:
 
         self.screen = pygame.display.set_mode((SCR_W, SCR_H), flags=flags,vsync=1)
 
-        self.feather = Feather()
+        self.feather = None
         self.loadGraphics()
         self.loadLevel(self.level_i)
 
@@ -63,12 +61,6 @@ class Application:
 
         self.scroll_xdir = 0
         self.scroll_ydir = 0
-
-        self.feather_anim_cnt = 0
-        self.feather_anim_dir = 1
-        self.feather_anim_speed = 8     # lower means faster
-        self.feather_anim_rot = 0
-        self.feather_anim_rot_dir = 2
 
         self.streamLines = pygame.Surface((SCR_W, SCR_H), pygame.SRCALPHA)
 
@@ -138,7 +130,7 @@ class Application:
         if feather_spawn is None:
             print(f"Feather Spawn not defined in level {level_name}")
         else:
-            self.feather = Feather()
+            self.feather = Feather(FEATHERS)
             self.feather.pos = self.gridToScreen(*feather_spawn)
 
 
@@ -206,22 +198,6 @@ class Application:
         if self.cam_y > self.lev_h * TILE_H - SCR_H:
             self.cam_y = self.lev_h * TILE_H - SCR_H
 
-    def updateFeather(self, dt):
-        self.feather.update(dt)
-        if self.frame_cnt % self.feather_anim_speed == 0:
-            self.feather_anim_cnt += self.feather_anim_dir
-
-            self.feather_anim_cnt %= 8
-
-            if int(random.random() * 8) == 0:
-                self.feather_anim_dir *= -1
-
-        self.feather_anim_rot += self.feather_anim_rot_dir
-        self.feather_anim_rot %= 360
-
-        if int(random.random() * 60) == 0:
-            self.feather_anim_rot_dir *= -1
-
     def render(self):
         self.screen.fill((40, 60, 80))
 
@@ -234,10 +210,8 @@ class Application:
                     self.drawTile(tile, x, y)
 
         # render feather
-        feather = FEATHERS[self.feather_anim_cnt]
-        feather = pygame.transform.rotate(feather, self.feather_anim_rot)
-        self.screen.blit(feather, (128 - (feather.get_width() - TILE_W) / 2, 64 - (feather.get_height() - TILE_H) / 2))
-        self.screen.blit(FEATHERS[0], [self.feather.pos[0] - self.cam_x, self.feather.pos[1] - self.cam_y])
+        feather = self.feather.getRender()
+        self.screen.blit(feather, [self.feather.pos[0] - self.cam_x, self.feather.pos[1] - self.cam_y])
 
         if SHOW_DEBUG_INFO:
             self.font.drawText(self.screen, 'LEV %02i' % self.level_i, x=1, y=1)
@@ -313,7 +287,7 @@ class Application:
     def update(self, dt):
         self.fluid.simulate(dt)
         self.updateCamera()
-        self.updateFeather(dt)
+        self.feather.update(dt, self.frame_cnt)
 
     def run(self):
         self.running = True

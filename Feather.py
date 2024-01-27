@@ -1,18 +1,41 @@
 import numpy as np
-import math
+import random
+import pygame
 
 GRAVITY = np.array([0., 20.])
 DRAG = .0005
 
 
 class Feather:
-    def __init__(self):
+    def __init__(self, feather_sprites):
+        self.feather_sprites = feather_sprites
         self.v = np.array([0., 0.])
         self.pos = np.array([0., 0.])
+        self.anim_cnt = 0
+        self.anim_dir = 1
+        self.anim_speed = 8     # lower means faster
+        self.anim_rot = 0
+        self.anim_rot_dir = 2
 
-    def update(self, dt):
+    def update(self, dt, frame_cnt):
+        self.update_phys(dt)
+        self.updateAnimationData(frame_cnt)
+
+    def updateAnimationData(self, frame_cnt):
+        if frame_cnt % self.anim_speed == 0:
+            self.anim_cnt += self.anim_dir
+
+            self.anim_cnt %= 8
+
+            if int(random.random() * 8) == 0:
+                self.anim_dir *= -1
+        self.anim_rot += self.anim_rot_dir
+        self.anim_rot %= 360
+        if int(random.random() * 60) == 0:
+            self.anim_rot_dir *= -1
+
+    def update_phys(self, dt):
         self.pos += self.v * dt
-
         self.v += (dt * GRAVITY)
         drag_scalar = np.dot(self.v, self.v) * DRAG
         v_norm = self.v / (np.linalg.norm(self.v) + 1e-16)
@@ -20,6 +43,7 @@ class Feather:
         drag_v = drag_v_norm * drag_scalar
         self.v += drag_v
 
-
-def magnitude(vector):
-    return math.sqrt(sum(pow(element, 2) for element in vector))
+    def getRender(self):
+        feather = self.feather_sprites[self.anim_cnt]
+        feather = pygame.transform.rotate(feather, self.anim_rot)
+        return feather
