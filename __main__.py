@@ -268,18 +268,22 @@ class Application:
         self.screen.blit(feather, (128 - (feather.get_width() - TILE_W) / 2, 64 - (feather.get_height() - TILE_H) / 2))
         self.screen.blit(FEATHERS[0], [self.feather.pos[0] - self.cam_x, self.feather.pos[1] - self.cam_y])
 
+        # show wind
+        self.showStreamLines()
+
+        # show help
         if SHOW_DEBUG_INFO:
+            pygame.draw.rect(self.screen, (40, 60, 80, 64), (SCR_W / 4, TILE_H, SCR_W / 2, TILE_H * 2.75))
+
             self.font.drawText(self.screen, 'LEV %02i' % self.level_i, x=1, y=1)
             self.font.drawText(self.screen, '%02ix%02i' % (self.lev_w, self.lev_h), x=1, y=2)
             self.font.centerText(self.screen, 'WASD = SCROLL AROUND', y=5)
             self.font.centerText(self.screen, 'F1/F2 = PREV/NEXT LEVEL', y=7)
             self.font.centerText(self.screen, 'F10 = TOGGLE EDIT MODE', y=9)
-            self.font.centerText(self.screen, 'F12 = SHOW/HIDE THIS TEXT', y=11)
+            self.font.centerText(self.screen, 'F12 = SHOW/HIDE THIS HELP', y=11)
 
             if self.edit_mode:
                 self.font.centerText(self.screen, 'F9 = SAVE (OVERWRITE)', y=13)
-
-        self.showStreamLines()
 
         # show edit cursor
         if self.edit_mode:
