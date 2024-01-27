@@ -28,6 +28,8 @@ TILE_W = 32
 TILE_H = 32
 SCROLL_SPEED = 4
 
+SHOW_DEBUG_INFO = True
+
 class Application:
     def __init__(self):
         pygame.init()
@@ -216,10 +218,12 @@ class Application:
         feather = pygame.transform.rotate(feather, self.feather_anim_rot)
         self.screen.blit(feather, (128 - (feather.get_width() - TILE_W) / 2, 64 - (feather.get_height() - TILE_H) / 2))
 
-        self.font.drawText(self.screen, 'LEV %02i' % self.level_i, x=1, y=1)
-        self.font.drawText(self.screen, '%02ix%02i' % (self.lev_w, self.lev_h), x=1, y=2)
-        self.font.centerText(self.screen, 'WASD = SCROLL AROUND', y=5)
-        self.font.centerText(self.screen, 'F1/F2 = PREV/NEXT LEVEL', y=7)
+        if SHOW_DEBUG_INFO:
+            self.font.drawText(self.screen, 'LEV %02i' % self.level_i, x=1, y=1)
+            self.font.drawText(self.screen, '%02ix%02i' % (self.lev_w, self.lev_h), x=1, y=2)
+            self.font.centerText(self.screen, 'WASD = SCROLL AROUND', y=5)
+            self.font.centerText(self.screen, 'F1/F2 = PREV/NEXT LEVEL', y=7)
+            self.font.centerText(self.screen, 'F12 = SHOW/HIDE THIS TEXT', y=9)
 
         self.showStreamLines()
 
@@ -247,6 +251,9 @@ class Application:
                     if self.level_i > self.level_amount:
                         self.level_i = 1
                     self.loadLevel(self.level_i)
+                elif e.key == pygame.K_F12:
+                    global SHOW_DEBUG_INFO
+                    SHOW_DEBUG_INFO = not SHOW_DEBUG_INFO
 
                 elif e.key == pygame.K_RETURN:
                     if modstate & pygame.KMOD_ALT:
