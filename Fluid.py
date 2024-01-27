@@ -8,20 +8,19 @@ class Fluid:
         self.width = width
         self.height = height
         self.velocity = np.zeros(shape=(width, height, 2))
-
-        self.space = np.zeros(shape=(width, height))
+        self.space = np.ones(shape=(width, height), dtype=np.int8)
         self.remainingTime = 0.0
 
     def solveIncompressibility(self):
         for y in range(1, self.height - 1):
             for x in range(1, self.width - 1):
-                if self.space[x, y] == 0.0:
+                if self.space[x, y] == 0:
                     continue
 
                 s = (self.space[x - 1, y] + self.space[x, y - 1]
                    + self.space[x + 1, y] + self.space[x, y + 1])
 
-                if s == 0.0:
+                if s == 0:
                     continue
 
                 p = (self.velocity[x + 1, y, 0] - self.velocity[x, y, 0]
@@ -43,6 +42,15 @@ class Fluid:
             self.velocity[0, y, 1] = self.velocity[1, y, 1]
             self.velocity[-1, y, 1] = self.velocity[-2, y, 1]
 
+    def advectVelocity(self, dt):
+        for y in range(1, self.height):
+            for x in range(1, self.width):
+                if self.space[x, y] and self.space[x - 1, y] and y < self.height - 1:
+                    pass
+
+                if self.space[x, y] and self.space[x, y - 1] and x < self.width - 1:
+                    pass
+
     def simulate(self, dt):
         stepsPerSecond = 100
 
@@ -52,7 +60,7 @@ class Fluid:
         for i in range(steps):
             self.solveIncompressibility()
         self.extrapolate()
-        #self.advectVelocity()
+        self.advectVelocity()
 
     def sampleField(self, x, y, field):
         x = max(1.0, min(x, self.width))
