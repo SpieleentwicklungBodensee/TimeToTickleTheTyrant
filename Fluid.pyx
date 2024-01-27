@@ -145,7 +145,14 @@ class Fluid:
         sx = 1.0 - tx
         sy = 1.0 - ty
 
-        return tuple(sx*sy * self.velocity[x0, y0]
-            + tx*sy * self.velocity[x1, y0]
-            + tx*ty * self.velocity[x1, y1]
-            + sx*ty * self.velocity[x0, y1])
+        u = (sx*sy * self.velocity[x0, y0, 0]
+            + tx*sy * self.velocity[x1, y0, 0]
+            + tx*ty * self.velocity[x1, y1, 0]
+            + sx*ty * self.velocity[x0, y1, 0]);
+
+        v = (sx*sy * self.velocity[x0, y0, 1]
+            + tx*sy * self.velocity[x1, y0, 1]
+            + tx*ty * self.velocity[x1, y1, 1]
+            + sx*ty * self.velocity[x0, y1, 1]);
+
+        return (u, v)
