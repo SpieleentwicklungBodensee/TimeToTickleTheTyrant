@@ -11,6 +11,7 @@ from bitmapfont import BitmapFont
 import time
 import random
 from Fluid import Fluid
+import math
 
 try:
     from settings import *
@@ -64,6 +65,8 @@ class Application:
         self.feather_anim_rot = 0
         self.feather_anim_rot_dir = 2
 
+        self.streamLines = pygame.Surface((SCR_W, SCR_H), pygame.SRCALPHA)
+
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
         TILES['F'] = (pygame.image.load('gfx/tile_feet.png'), pygame.image.load('gfx/tile_feet2.png'))
@@ -95,6 +98,41 @@ class Application:
         for y in range(self.lev_h):
             for x in range(self.lev_w):
                 self.fluid.space[x, y] = 0.0 if self.level[y][x] == '#' else 1.0
+
+    def showStreamLines(self):
+        numSegs = 15
+
+        minSpeed = 0.1
+
+        for i in range(0, self.lev_w - 1):
+            for j in range(0, self.lev_h - 1):
+                x = (i + 0.5) * TILE_W
+                y = (j + 0.5) * TILE_H
+
+                points = [(x, y)]
+
+                for n in range(numSegs):
+                    v_x, v_y = self.fluid.sampleVelocity(x / TILE_W, y / TILE_H)
+
+                    v = math.sqrt(v_x**2 + v_y**2)
+
+                    if v < minSpeed:
+                        break
+
+                    #segLen = 0.2
+                    #x += v_x / v * segLen
+                    #y += v_y / v * segLen
+                    x += v_x * 0.01
+                    y += v_y * 0.01
+                    if x > SCR_W or y > SCR_H:
+                        break
+
+                    points.append((x, y))
+
+                if len(points) > 1:
+                    pygame.draw.lines(self.streamLines, pygame.Color(255, 255, 255), False, points)
+
+        self.screen.blit(self.streamLines, (0, 0))
 
     def drawTile(self, tile, x, y):
         t = TILES[tile]
@@ -157,6 +195,8 @@ class Application:
         self.font.drawText(self.screen, '%02ix%02i' % (self.lev_w, self.lev_h), x=1, y=2)
         self.font.centerText(self.screen, 'WASD = SCROLL AROUND', y=5)
         self.font.centerText(self.screen, 'F1/F2 = PREV/NEXT LEVEL', y=7)
+
+        #self.showStreamLines()
 
         pygame.display.flip()
 
