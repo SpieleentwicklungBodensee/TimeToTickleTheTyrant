@@ -179,7 +179,7 @@ class Application:
         for y in range(self.lev_h):
             for x in range(self.lev_w):
                 if self.level[y][x] == "X": # heat grill
-                    self.windSources.append((x, y-1, -1, 0))
+                    self.windSources.append((x, y-1, 0, -1))
 
 
     def updateLevelWind(self):
