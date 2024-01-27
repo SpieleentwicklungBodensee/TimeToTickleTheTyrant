@@ -7,11 +7,14 @@
 import pygame
 import os
 
+import cam
 from Feather import Feather
 from bitmapfont import BitmapFont
 import time
 from Fluid import Fluid
 import math
+
+from cam import *
 
 try:
     from settings import *
@@ -19,14 +22,9 @@ except ImportError:
     FULLSCREEN = False
 
 
-SCR_W, SCR_H = 640, 360
-
 TILES = {}
 FEATHERS = []
 
-TILE_W = 32
-TILE_H = 32
-SCROLL_SPEED = 4
 
 SHOW_DEBUG_INFO = True
 
@@ -35,6 +33,7 @@ class Application:
     def __init__(self):
         pygame.init()
 
+        self.cam = cam.Cam()
         self.running = False
         self.frame_cnt = 0
 
@@ -49,14 +48,12 @@ class Application:
         if FULLSCREEN:
             flags |= pygame.FULLSCREEN
 
-        self.screen = pygame.display.set_mode((SCR_W, SCR_H), flags=flags,vsync=1)
+        self.screen = pygame.display.set_mode((SCR_W, SCR_H), flags=flags, vsync=1)
 
         self.feather = None
         self.loadGraphics()
         self.loadLevel(self.level_i)
 
-        self.cam_x = 0
-        self.cam_y = 0
         self.mouse_pos = (0, 0)
 
         self.scroll_xdir = 0
@@ -121,8 +118,7 @@ class Application:
 
         self.lev_w = lev_w
         self.lev_h = len(self.level)
-        self.cam_x = 0
-        self.cam_y = 0
+        self.cam.reset()
 
         self.fluid = Fluid(self.lev_w + 2, self.lev_h + 2)
         self.updateLevelWind()
@@ -136,8 +132,8 @@ class Application:
         if feather_spawn is None:
             print(f"Feather Spawn not defined in level {level_name}")
         else:
-            self.feather = Feather(FEATHERS)
-            self.feather.pos = self.gridToScreen(*feather_spawn)
+            self.feather = Feather(FEATHERS, self.cam)
+            self.feather.pos = self.cam.gridToScreen(*feather_spawn)
 
     def updateLevelWind(self):
         for y in range(self.lev_h):
@@ -189,7 +185,7 @@ class Application:
                     points.append((x, y))
 
                 if len(points) > 1:
-                    points = [self.gridToScreen(*p) for p in points]
+                    points = [self.cam.gridToScreen(*p) for p in points]
                     pygame.draw.lines(self.streamLines, pygame.Color(255, 255, 255), False, points)
 
         self.screen.blit(self.streamLines, (0, 0))
@@ -199,43 +195,28 @@ class Application:
 
         if type(t) is tuple:
             t = t[0] if int(time.time() * 1000) % 500 < 250 else t[1]
-        self.screen.blit(t, self.gridToScreen(x, y))
+        self.screen.blit(t, self.cam.gridToScreen(x, y))
 
     def setTile(self, tile, x, y):
         line = self.level[y]
         line = line[:x] + tile + line[x+1:]
         self.level[y] = line
 
-    def gridToScreen(self, x, y):
-        return x * TILE_W - self.cam_x, y * TILE_H - self.cam_y
-
-    def screenToGrid(self, x, y):
-        return (x + self.cam_x) // TILE_W, (y + self.cam_y) // TILE_H
-
     def updateCamera(self):
-        self.cam_x += self.scroll_xdir * SCROLL_SPEED
-        self.cam_y += self.scroll_ydir * SCROLL_SPEED
-
-        if self.cam_x < 0:
-            self.cam_x = 0
-        if self.cam_x > self.lev_w * TILE_W - SCR_W:
-            self.cam_x = self.lev_w * TILE_W - SCR_W
-        if self.cam_y < 0:
-            self.cam_y = 0
-        if self.cam_y > self.lev_h * TILE_H - SCR_H:
-            self.cam_y = self.lev_h * TILE_H - SCR_H
+        bounds = (self.lev_w, self.lev_h)
+        self.cam.scroll(bounds, (self.scroll_xdir, self.scroll_ydir))
 
     def updateEdit(self):
         if self.edit_draw:
             # set tile in grid
-            mx, my = self.screenToGrid(*self.mouse_pos)
+            mx, my = self.cam.screenToGrid(*self.mouse_pos)
             self.setTile(self.edit_tile, mx, my)
 
             self.updateLevelWind()
 
         if self.edit_delete:
             # delete / set empty tile in grid
-            mx, my = self.screenToGrid(*self.mouse_pos)
+            mx, my = self.cam.screenToGrid(*self.mouse_pos)
             self.setTile(' ', mx, my)
 
             self.updateLevelWind()
@@ -253,7 +234,7 @@ class Application:
 
         # render feather
         feather = self.feather.getRender()
-        self.screen.blit(feather, [self.feather.pos[0] - self.cam_x, self.feather.pos[1] - self.cam_y])
+        self.screen.blit(feather, [self.feather.pos[0] - self.cam.pos_x, self.feather.pos[1] - self.cam.pos_y])
 
         # show wind
         self.showStreamLines()
@@ -278,14 +259,14 @@ class Application:
             if self.edit_delete:
                 cursor = ' '
 
-            mx, my = self.screenToGrid(*self.mouse_pos)
+            mx, my = self.cam.screenToGrid(*self.mouse_pos)
             self.drawTile(cursor, mx, my)
             if int(time.time() * 1000) % 600 < 300:
                 color = (255, 255, 255)
             else:
                 color = (0, 0, 0)
 
-            rx, ry = self.gridToScreen(mx, my)
+            rx, ry = self.cam.gridToScreen(mx, my)
             pygame.draw.rect(self.screen, color, (rx, ry, TILE_W, TILE_H), width=1)
 
         pygame.display.flip()
@@ -341,7 +322,7 @@ class Application:
 
             elif e.type == pygame.MOUSEBUTTONUP:
                 # TODO do relevant things on mouse click
-                print(f"clicked on grid position: {self.screenToGrid(*self.mouse_pos)}")
+                print(f"clicked on grid position: {self.cam.screenToGrid(*self.mouse_pos)}")
 
                 if e.button == 1:       # LEFT mousebutton
                     if self.edit_draw:
@@ -383,7 +364,7 @@ class Application:
     def update(self, dt):
         self.fluid.simulate(dt)
         self.updateCamera()
-        self.feather.update(dt, self.frame_cnt)
+        self.feather.update(dt, self.frame_cnt, self.fluid)
 
         if self.edit_mode:
             self.updateEdit()
@@ -410,4 +391,3 @@ class Application:
 
 app = Application()
 app.run()
-

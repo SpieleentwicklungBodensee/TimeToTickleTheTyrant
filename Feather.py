@@ -2,12 +2,14 @@ import numpy as np
 import random
 import pygame
 
-GRAVITY = np.array([0., 20.])
+
+GRAVITY = np.array([0., 1.])
 DRAG = .0005
 
 
 class Feather:
-    def __init__(self, feather_sprites):
+    def __init__(self, feather_sprites, cam):
+        self.cam = cam
         self.feather_sprites = feather_sprites
         self.v = np.array([0., 0.])
         self.pos = np.array([0., 0.])
@@ -17,8 +19,8 @@ class Feather:
         self.anim_rot = 0
         self.anim_rot_dir = 2
 
-    def update(self, dt, frame_cnt):
-        self.update_phys(dt)
+    def update(self, dt, frame_cnt, fluid):
+        self.update_phys(dt, fluid)
         self.updateAnimationData(frame_cnt)
 
     def updateAnimationData(self, frame_cnt):
@@ -34,9 +36,17 @@ class Feather:
         if int(random.random() * 60) == 0:
             self.anim_rot_dir *= -1
 
-    def update_phys(self, dt):
+    def update_phys(self, dt, fluid):
         self.pos += self.v * dt
         self.v += (dt * GRAVITY)
+
+        # x, y = self.cam.screenToGrid(self.pos[0], self.pos[1])
+        # v_wind = fluid.sampleVelocity(x + 1, y + 1)  # +1 for fluid grid offset
+        # print(v_wind)
+        # a_wind = np.array(v_wind) * DRAG
+        #
+        # self.v += a_wind
+
         drag_scalar = np.dot(self.v, self.v) * DRAG
         v_norm = self.v / (np.linalg.norm(self.v) + 1e-16)
         drag_v_norm = np.array([element * -1 for element in v_norm])
