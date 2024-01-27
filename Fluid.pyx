@@ -204,7 +204,7 @@ cdef class Fluid:
             y += v_y / v * segLen
             #x += v_x * 0.01
             #y += v_y * 0.01
-            if x >= self.width or y >= self.height:
+            if x >= self.width - 2 or y >= self.height - 2:
                 break
 
             points.append((x, y))
