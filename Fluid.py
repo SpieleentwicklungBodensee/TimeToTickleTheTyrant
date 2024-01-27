@@ -11,7 +11,6 @@ class Fluid:
         self.velocity = np.zeros(shape=(width, height, 2))
         self.space = np.ones(shape=(width, height), dtype=np.int8)
         self.remainingTime = 0.0
-        self.velocity[3, 3] = (1, 1)
 
     def solveIncompressibility(self):
         for y in range(1, self.height - 1):
@@ -29,7 +28,7 @@ class Fluid:
                    + self.velocity[x, y + 1, 1] - self.velocity[x, y, 1]) / -s
 
                 overRelaxation = 1.9
-                p *= overRelaxation
+                #p *= overRelaxation
 
                 self.velocity[x, y] -= np.array(self.space[x - 1, y], self.space[x, y - 1]) * p
                 self.velocity[x + 1, y, 0] += self.space[x + 1, y] * p
