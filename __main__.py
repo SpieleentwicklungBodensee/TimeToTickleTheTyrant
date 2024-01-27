@@ -29,7 +29,6 @@ FEATHERS = []
 TILE_W = 32
 TILE_H = 32
 SCROLL_SPEED = 4
-FEATHER_SPAWN = np.array([55.,77.]) #TODO tile in level?
 
 SHOW_DEBUG_INFO = True
 
@@ -76,6 +75,7 @@ class Application:
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
         TILES[' '] = pygame.image.load('gfx/tile_air.png')
+        TILES['*'] = pygame.image.load('gfx/tile_air.png') # feather spawn point, render as empty tile
         TILES['/'] = pygame.image.load('gfx/tile_air__rain.png')
         TILES['F'] = (pygame.image.load('gfx/tile_feet.png'), pygame.image.load('gfx/tile_feet2.png'))
         TILES['l'] = pygame.image.load('gfx/tile_lantern.png')
@@ -125,14 +125,22 @@ class Application:
         self.lev_h = len(self.level)
         self.cam_x = 0
         self.cam_y = 0
-        self.feather = Feather()
-        self.feather.pos = np.copy(FEATHER_SPAWN)
 
         self.fluid = Fluid(self.lev_w + 2, self.lev_h + 2)
 
+        feather_spawn = None
         for y in range(self.lev_h):
             for x in range(self.lev_w):
                 self.fluid.space[x + 1, y + 1] = 0 if self.level[y][x] == '#' else 1
+                if self.level[y][x] == "*":  # look for feather spawn
+                    feather_spawn = (x, y)
+
+        if feather_spawn is None:
+            print(f"Feather Spawn not defined in level {level_name}")
+        else:
+            self.feather = Feather()
+            self.feather.pos = self.gridToScreen(*feather_spawn)
+
 
     def showStreamLines(self):
         self.fluid.velocity[3, 3] = (10, 4)
