@@ -436,11 +436,12 @@ class Application:
         self.cloud.update(dt, self.frame_cnt, self.feather)
 
         if self.cloud.isBlowing():
-            cx, cy = self.cam.screenToGrid(self.mouse_pos[0] + TILE_W * 0.5, self.mouse_pos[1] + TILE_H * 0.5)
+            cx, cy = self.cam.worldToGrid(self.cloud.pos[0], self.cloud.pos[1])
             blowdir = self.cloud.getBlowDirection()
-            self.fluid.setVelocity(cx, cy, blowdir)
+            bx, by = cx + blowdir[0], cy + blowdir[1]
+            self.fluid.setVelocity(bx, by, blowdir)
 
-            self.debugTilePos = (cx, cy)
+            self.debugTilePos = (bx, by)
         else:
             self.debugTilePos = None
 
