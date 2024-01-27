@@ -70,24 +70,18 @@ class Fluid:
         self.advectVelocity(dt)
 
     def sampleField(self, x, y, field):
-        x = max(1.0, min(x, self.width))
-        y = max(1.0, min(y, self.height))
+        x -= 0.5
+        y -= 0.5
 
-        if field == VELOCITY_X:
-            dx = 0.5
-            dy = 0.0
-        elif field == VELOCITY_Y:
-            dx = 0.0
-            dy = 0.5
+        x = max(0, min(x, self.width - 0.001))
+        y = max(0, min(y, self.height - 0.001))
 
-        x0 = min(math.floor(x - dx), self.width - 1)
-        tx = (x - dx) - x0
-        x1 = min(x0 + 1, self.width - 1)
-
-        y0 = min(math.floor(y - dy), self.height - 1)
-        ty = (y - dy) - y0
-        y1 = min(y0 + 1, self.height - 1)
-
+        x0 = math.floor(x)
+        y0 = math.floor(y)
+        x1 = x0 + 1
+        y1 = y0 + 1
+        tx = x - x0
+        ty = y - y0
         sx = 1.0 - tx
         sy = 1.0 - ty
 

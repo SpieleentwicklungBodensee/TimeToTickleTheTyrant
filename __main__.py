@@ -130,15 +130,17 @@ class Application:
 
         minSpeed = 0.1
 
-        for i in range(0, self.lev_w - 1):
-            for j in range(0, self.lev_h - 1):
-                x = (i + 0.5) * TILE_W
-                y = (j + 0.5) * TILE_H
+        self.streamLines.fill((0,0,0,0))
 
-                points = [(x, y)]
+        for i in range(1, self.lev_w):
+            for j in range(1, self.lev_h):
+                x = i + 0.5
+                y = j + 0.5
+
+                points = [(x * TILE_W, y * TILE_H)]
 
                 for n in range(numSegs):
-                    v_x, v_y = self.fluid.sampleVelocity(x / TILE_W, y / TILE_H)
+                    v_x, v_y = self.fluid.sampleVelocity(x, y)
                     v = math.sqrt(v_x**2 + v_y**2)
 
                     if v < minSpeed:
@@ -149,10 +151,10 @@ class Application:
                     #y += v_y / v * segLen
                     x += v_x * 0.01
                     y += v_y * 0.01
-                    if x > SCR_W or y > SCR_H:
+                    if x >= self.lev_w or y >= self.lev_h:
                         break
 
-                    points.append((x, y))
+                    points.append((x * TILE_W, y * TILE_H))
 
                 if len(points) > 1:
                     pygame.draw.lines(self.streamLines, pygame.Color(255, 255, 255), False, points)
