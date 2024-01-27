@@ -155,6 +155,8 @@ class Application:
             for line in self.level:
                 f.write(line + '\n')
 
+        self.edit_mode = False
+
     def showStreamLines(self):
         self.fluid.velocity[3, 3] = (10, 4)
 
