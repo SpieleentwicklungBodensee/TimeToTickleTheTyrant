@@ -42,18 +42,13 @@ class Feather:
         self.updatePosition(dt)
         self.v += (dt * GRAVITY)
 
-        # x, y = self.cam.screenToGrid(self.pos[0], self.pos[1])
-        # v_wind = fluid.sampleVelocity(x, y)
-        # print(v_wind)
-        # a_wind = np.array(v_wind) * DRAG
-        #
-        # self.v += a_wind
+        x, y = self.cam.worldToGrid(self.pos[0], self.pos[1])
+        v_wind = np.array(fluid.sampleVelocity(x, y))
+        dv = self.v - v_wind * 1000.0
 
-        drag_scalar = np.dot(self.v, self.v) * DRAG
-        v_norm = self.v / max(np.linalg.norm(self.v), 1e-16)
-        drag_v_norm = -v_norm
-        drag_v = drag_v_norm * drag_scalar
-        self.v += drag_v
+        drag_scalar = np.dot(dv, dv) * DRAG
+        v_norm = dv / max(np.linalg.norm(dv), 1e-16)
+        self.v -= v_norm * drag_scalar
 
     def updatePosition(self, dt):
         potential_pos = self.pos + self.v * dt
