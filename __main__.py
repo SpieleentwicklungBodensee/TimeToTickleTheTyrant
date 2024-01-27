@@ -263,6 +263,7 @@ class Application:
             mx, my = self.cam.screenToGrid(*self.mouse_pos)
             self.setTile(self.edit_tile, mx, my)
 
+            self.updateWindSources()
             self.updateLevelWind()
 
         if self.edit_delete:
@@ -270,6 +271,7 @@ class Application:
             mx, my = self.cam.screenToGrid(*self.mouse_pos)
             self.setTile(' ', mx, my)
 
+            self.updateWindSources()
             self.updateLevelWind()
 
     def render(self):
