@@ -19,6 +19,8 @@ class Cloud:
         self.blowing = False
         self.frame_cnt_offset = 0
 
+        self.lookDirection = -1
+
     def update(self, dt, frame_cnt):
         self.update_phys(dt)
         self.updateAnimationData(frame_cnt)
@@ -65,6 +67,10 @@ class Cloud:
     def getRender(self):
         sprite = self.sprites[self.anim_cnt]
         sprite = pygame.transform.rotate(sprite, self.anim_rot)
+
+        if self.lookDirection > 0:
+            sprite = pygame.transform.flip(sprite, True, False)
+
         return sprite
 
     def startBlowing(self, frame_cnt):
@@ -84,3 +90,15 @@ class Cloud:
             return True
 
         return False
+
+    def setLookDirection(self, d):
+        if d < 0:
+            self.lookDirection = -1
+        else:
+            self.lookDirection = 1
+
+    def getLookDirection(self):
+        return self.lookDirection
+
+    def setPosition(self, x, y):
+        self.pos = np.array([float(x), float(y)])

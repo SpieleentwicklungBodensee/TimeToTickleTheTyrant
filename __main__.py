@@ -432,11 +432,17 @@ class Application:
 
         if self.cloud.isBlowing():
             cx, cy = self.cam.screenToGrid(self.mouse_pos[0] + TILE_W * 0.5, self.mouse_pos[1] + TILE_H * 0.5)
-            self.fluid.setVelocity(cx +1, cy +1, (-4, 0))
+            self.fluid.setVelocity(cx +1, cy +1, (4 * self.cloud.getLookDirection(), 0))
 
             self.debugTilePos = (cx, cy)
         else:
             self.debugTilePos = None
+
+        self.cloud.setPosition(self.mouse_pos[0] + self.cam.pos_x, self.mouse_pos[1] + self.cam.pos_y)
+        if self.cloud.pos[0] < self.feather.pos[0]:
+            self.cloud.setLookDirection(1)
+        else:
+            self.cloud.setLookDirection(-1)
 
         if self.edit_mode:
             self.updateEdit()
