@@ -156,9 +156,9 @@ class Application:
                     if v < minSpeed:
                         break
 
-                    #segLen = 0.2
-                    #x += v_x / v * segLen
-                    #y += v_y / v * segLen
+                    segLen = 0.2
+                    x += v_x / v * segLen
+                    y += v_y / v * segLen
                     x += v_x * 0.01
                     y += v_y * 0.01
                     if x >= self.lev_w or y >= self.lev_h:
