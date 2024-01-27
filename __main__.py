@@ -439,7 +439,7 @@ class Application:
 
         if self.cloud.isBlowing():
             cx, cy = self.cam.screenToGrid(self.mouse_pos[0] + TILE_W * 0.5, self.mouse_pos[1] + TILE_H * 0.5)
-            self.fluid.setVelocity(cx, cy, (-4, 0))
+            self.fluid.setVelocity(cx +1, cy +1, (-4, 0))
 
             self.debugTilePos = (cx, cy)
         else:
