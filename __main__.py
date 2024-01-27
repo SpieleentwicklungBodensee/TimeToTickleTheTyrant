@@ -285,9 +285,10 @@ class Application:
             #self.showSmoke()
 
         # render cloud (player)
-        cloud = self.cloud.getRender()
-        cx, cy = self.mouse_pos
-        self.screen.blit(cloud, (cx, cy))
+        if not self.edit_mode:
+            cloud = self.cloud.getRender()
+            cx, cy = self.mouse_pos
+            self.screen.blit(cloud, (cx, cy))
 
         # show help
         if SHOW_DEBUG_INFO:
