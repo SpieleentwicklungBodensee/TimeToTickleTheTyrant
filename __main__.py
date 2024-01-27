@@ -101,7 +101,7 @@ class Application:
     def loadLevel(self, level_name):
         print('loading level: ' + str(level_name))
         with open(f"levels/{level_name}.lvl") as f:
-            self.level = [line.strip() for line in f.readlines()]   # note: levels should always contain a border!
+            self.level = [line.rstrip("\r\n") for line in f.readlines()]   # note: levels should always contain a border!
         self.lev_w = len(self.level[0])
         self.lev_h = len(self.level)
         self.cam_x = 0
