@@ -28,7 +28,6 @@ TILE_W = 32
 TILE_H = 32
 SCROLL_SPEED = 4
 
-
 class Application:
     def __init__(self):
         pygame.init()
@@ -127,7 +126,6 @@ class Application:
 
                 for n in range(numSegs):
                     v_x, v_y = self.fluid.sampleVelocity(x / TILE_W, y / TILE_H)
-
                     v = math.sqrt(v_x**2 + v_y**2)
 
                     if v < minSpeed:
@@ -210,7 +208,7 @@ class Application:
         self.font.centerText(self.screen, 'WASD = SCROLL AROUND', y=5)
         self.font.centerText(self.screen, 'F1/F2 = PREV/NEXT LEVEL', y=7)
 
-        #self.showStreamLines()
+        self.showStreamLines()
 
         pygame.display.flip()
 

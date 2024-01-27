@@ -1,4 +1,5 @@
 import numpy as np
+import math
 
 VELOCITY_X = 0
 VELOCITY_Y = 1
@@ -10,6 +11,7 @@ class Fluid:
         self.velocity = np.zeros(shape=(width, height, 2))
         self.space = np.ones(shape=(width, height), dtype=np.int8)
         self.remainingTime = 0.0
+        self.velocity[3, 3] = (1, 1)
 
     def solveIncompressibility(self):
         for y in range(1, self.height - 1):
@@ -73,11 +75,11 @@ class Fluid:
             dx = 0.0
             dy = 0.5
 
-        x0 = int((x - dx) // (self.width - 1))
+        x0 = min(math.floor(x - dx), self.width - 1)
         tx = (x - dx) - x0
         x1 = min(x0 + 1, self.width - 1)
 
-        y0 = int((y - dy) // (self.height - 1))
+        y0 = min(math.floor(y - dy), self.height - 1)
         ty = (y - dy) - y0
         y1 = min(y0 + 1, self.height - 1)
 
@@ -85,15 +87,15 @@ class Fluid:
         sy = 1.0 - ty
 
         if field == VELOCITY_X:
-            return (sx*sy * self.velocity[x0 * self.height, y0, 0] +
-                    tx*sy * self.velocity[x1 * self.height, y0, 0] +
-                    tx*ty * self.velocity[x1 * self.height, y1, 0] +
-                    sx*ty * self.velocity[x0 * self.height, y1, 0])
+            return (sx*sy * self.velocity[x0, y0, 0] +
+                    tx*sy * self.velocity[x1, y0, 0] +
+                    tx*ty * self.velocity[x1, y1, 0] +
+                    sx*ty * self.velocity[x0, y1, 0])
         elif field == VELOCITY_Y:
-            return (sx*sy * self.velocity[x0 * self.height, y0, 1] +
-                    tx*sy * self.velocity[x1 * self.height, y0, 1] +
-                    tx*ty * self.velocity[x1 * self.height, y1, 1] +
-                    sx*ty * self.velocity[x0 * self.height, y1, 1])
+            return (sx*sy * self.velocity[x0, y0, 1] +
+                    tx*sy * self.velocity[x1, y0, 1] +
+                    tx*ty * self.velocity[x1, y1, 1] +
+                    sx*ty * self.velocity[x0, y1, 1])
 
     def sampleVelocity(self, x, y):
         return (
