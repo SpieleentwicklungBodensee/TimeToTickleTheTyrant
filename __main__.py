@@ -9,6 +9,7 @@ import os
 
 import cam
 from Feather import Feather
+from Cloud import Cloud
 from bitmapfont import BitmapFont
 import time
 from Fluid import Fluid
@@ -24,6 +25,7 @@ except ImportError:
 
 TILES = {}
 FEATHERS = []
+CLOUDS = []
 
 
 SHOW_DEBUG_INFO = True
@@ -48,9 +50,12 @@ class Application:
         if FULLSCREEN:
             flags |= pygame.FULLSCREEN
 
-        self.screen = pygame.display.set_mode((SCR_W, SCR_H), flags=flags, vsync=1)
+        self.screen = pygame.display.set_mode((SCR_W, SCR_H), flags=flags,vsync=1)
+        pygame.mouse.set_visible(False)
 
         self.feather = None
+        self.cloud = None
+
         self.loadGraphics()
         self.loadLevel(self.level_i)
 
@@ -66,6 +71,8 @@ class Application:
         self.edit_tile_i = 0
         self.edit_draw = False
         self.edit_delete = False
+
+        self.helpScreen = pygame.Surface((SCR_W / 3, SCR_H / 4), pygame.SRCALPHA)
 
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
@@ -98,6 +105,16 @@ class Application:
                      pygame.image.load('gfx/feather8.png'),
                      ]
 
+        global CLOUDS
+        CLOUDS += [pygame.image.load('gfx/cloud1.png'),
+                   pygame.image.load('gfx/cloud2.png'),
+                   pygame.image.load('gfx/cloud3.png'),
+                   pygame.image.load('gfx/cloud4.png'),
+                   pygame.image.load('gfx/cloud5.png'),
+                   pygame.image.load('gfx/cloud6.png'),
+                   pygame.image.load('gfx/cloud7.png'),
+                   ]
+
         self.font = BitmapFont('gfx/heimatfont.png', font_w=8, font_h=8, scr_w=SCR_W, scr_h=SCR_H)
 
     def loadLevel(self, level_name):
@@ -121,6 +138,7 @@ class Application:
         self.cam.reset()
 
         self.fluid = Fluid(self.lev_w + 2, self.lev_h + 2)
+        self.smoke = pygame.Surface((TILE_W * self.lev_w, TILE_H * self.lev_h), pygame.SRCALPHA)
         self.updateLevelWind()
 
         feather_spawn = None
@@ -134,6 +152,8 @@ class Application:
         else:
             self.feather = Feather(FEATHERS, self.cam)
             self.feather.pos = self.cam.gridToScreen(*feather_spawn)
+
+        self.cloud = Cloud(CLOUDS)
 
     def updateLevelWind(self):
         for y in range(self.lev_h):
@@ -151,9 +171,21 @@ class Application:
             for line in self.level:
                 f.write(line + '\n')
 
-    def showStreamLines(self):
-        self.fluid.velocity[3, 3] = (10, 4)
+        self.edit_mode = False
 
+    def showSmoke(self):
+        smoke = np.repeat(np.repeat(
+            (self.fluid.smoke * 255).astype(np.uint8)[1:-1, 1:-1],
+            TILE_W, axis=0), TILE_H, axis=1
+        )
+
+        surface_alpha = np.array(self.smoke.get_view('A'), copy=False)
+        surface_alpha[:,:] = smoke
+        surface_alpha = None
+
+        self.screen.blit(self.smoke, (0, 0))
+
+    def showStreamLines(self):
         numSegs = 15
 
         minSpeed = 0.1
@@ -237,21 +269,34 @@ class Application:
         self.screen.blit(feather, [self.feather.pos[0] - self.cam.pos_x, self.feather.pos[1] - self.cam.pos_y])
 
         # show wind
+        self.fluid.velocity[3, 3] = (10, 4)
+        self.fluid.smoke[3, 3] = 1.0
         self.showStreamLines()
+        #self.showSmoke()
+
+        # render cloud (player)
+        cloud = self.cloud.getRender()
+        cx, cy = self.mouse_pos
+        self.screen.blit(cloud, (cx, cy))
 
         # show help
         if SHOW_DEBUG_INFO:
-            pygame.draw.rect(self.screen, (40, 60, 80, 64), (SCR_W / 4, TILE_H, SCR_W / 2, TILE_H * 2.75))
+            #pygame.draw.rect(self.helpScreen, (40, 60, 80, 64), (SCR_W / 4, TILE_H, SCR_W / 2, TILE_H * 2.75))
+            self.helpScreen.fill((00, 0, 0, 64))
 
-            self.font.drawText(self.screen, 'LEV %02i' % self.level_i, x=1, y=1)
-            self.font.drawText(self.screen, '%02ix%02i' % (self.lev_w, self.lev_h), x=1, y=2)
-            self.font.centerText(self.screen, 'WASD = SCROLL AROUND', y=5)
-            self.font.centerText(self.screen, 'F1/F2 = PREV/NEXT LEVEL', y=7)
-            self.font.centerText(self.screen, 'F10 = TOGGLE EDIT MODE', y=9)
-            self.font.centerText(self.screen, 'F12 = SHOW/HIDE THIS HELP', y=11)
+            self.font.drawText(self.helpScreen, 'LEVEL %02i (%02ix%02i)' % (self.level_i, self.lev_w, self.lev_h), x=1, y=1)
+            self.font.drawText(self.helpScreen, '')
+            self.font.drawText(self.helpScreen, 'WASD = SCROLL AROUND')
+            self.font.drawText(self.helpScreen, 'F1/F2 = PREV/NEXT LEVEL')
+            self.font.drawText(self.helpScreen, 'F10 = TOGGLE EDIT MODE')
+            self.font.drawText(self.helpScreen, 'F12 = SHOW/HIDE THIS HELP')
+            self.font.drawText(self.helpScreen, '')
 
             if self.edit_mode:
-                self.font.centerText(self.screen, 'F9 = SAVE (OVERWRITE)', y=13)
+                self.font.drawText(self.helpScreen, '--- EDIT MODE -----------')
+                self.font.drawText(self.helpScreen, 'F9 = SAVE (OVERWRITE)')
+
+            self.screen.blit(self.helpScreen, (SCR_W * 0.6, 8))
 
         # show edit cursor
         if self.edit_mode:
@@ -325,8 +370,12 @@ class Application:
                 print(f"clicked on grid position: {self.cam.screenToGrid(*self.mouse_pos)}")
 
                 if e.button == 1:       # LEFT mousebutton
-                    if self.edit_draw:
-                        self.edit_draw = False
+                    if self.edit_mode:
+                        if self.edit_draw:
+                            self.edit_draw = False
+
+                    else:
+                        self.cloud.stopBlowing(self.frame_cnt)
 
                 elif e.button == 3:     # RIGHT mousebutton
                     if self.edit_delete:
@@ -334,7 +383,11 @@ class Application:
 
             elif e.type == pygame.MOUSEBUTTONDOWN:
                 if e.button == 1:       # LEFT mousebutton
-                    self.edit_draw = True
+                    if self.edit_mode:
+                        self.edit_draw = True
+                    else:
+                        self.cloud.startBlowing(self.frame_cnt)
+
                 elif e.button == 3:     # RIGHT mousebutton
                     self.edit_delete = True
 
@@ -365,6 +418,7 @@ class Application:
         self.fluid.simulate(dt)
         self.updateCamera()
         self.feather.update(dt, self.frame_cnt, self.fluid)
+        self.cloud.update(dt, self.frame_cnt)
 
         if self.edit_mode:
             self.updateEdit()
