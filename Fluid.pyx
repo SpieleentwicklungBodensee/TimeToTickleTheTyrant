@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from libc.math cimport floor, sqrt
+from libc.math cimport floor, sqrt, round
 
 cimport cython
 from libc.stdint cimport int8_t, uint32_t
@@ -12,6 +12,7 @@ VELOCITY_Y = 1
 SMOKE = 2
 
 cdef class Fluid:
+    cdef int granularity
     cdef int width
     cdef int height
     cdef double[:, :, ::1] velocity
@@ -19,20 +20,38 @@ cdef class Fluid:
     cdef double[:, ::1] smoke
     cdef double remainingTime
 
-    def __init__(self, width, height):
-        self.width = width + 2
-        self.height = height + 2
+    def __init__(self, width, height, granularity):
+        self.granularity = granularity
+        self.width = width * granularity + 2
+        self.height = height * granularity + 2
         self.velocity = np.zeros(shape=(self.width, self.height, 2))
         self.space = np.ones(shape=(self.width, self.height), dtype=np.int8)
         self.smoke = np.zeros(shape=(self.width, self.height))
         self.remainingTime = 0.0
 
-    def setSpace(self, int x, int y, s):
-        self.space[x + 1, y + 1] = s
+    cdef float conv_coord(self, float v):
+        return v * self.granularity + 1
 
-    def setVelocity(self, int x, int y, v):
-        self.velocity[x + 1, y + 1, 0] = v[0]
-        self.velocity[x + 1, y + 1, 1] = v[1]
+    def setSpace(self, int x, int y, s):
+        x0 = x * self.granularity + 1 - self.granularity // 2
+        y0 = y * self.granularity + 1 - self.granularity // 2
+
+        for dx in range(self.granularity):
+            for dy in range(self.granularity):
+                self.space[x0 + dx, y0 + dx] = s
+
+    def setVelocity(self, float x_, float y_, v):
+        cdef int x = <int>floor(self.conv_coord(x_))
+        cdef int y = <int>floor(self.conv_coord(y_))
+        v *= self.granularity
+
+        # todo we currently do this to clear new walls
+        #if self.space[x, y] == 0:
+        #    print('error attempted to set invalid velocity', x, y)
+        #    return
+
+        self.velocity[x, y, 0] = v[0]
+        self.velocity[x, y, 1] = v[1]
 
     cdef solveIncompressibility(self):
         cdef int x, y, s
@@ -160,8 +179,8 @@ cdef class Fluid:
     cpdef (float, float) sampleVelocity(self, float x, float y):
         cdef uint32_t x0, y0
 
-        x += 1
-        y += 1
+        x = self.conv_coord(x)
+        y = self.conv_coord(y)
         x -= 0.5
         y -= 0.5
 
@@ -187,11 +206,14 @@ cdef class Fluid:
             + tx*ty * self.velocity[x1, y1, 1]
             + sx*ty * self.velocity[x0, y1, 1]);
 
-        return (u, v)
+        return (u / self.granularity, v / self.granularity)
 
     def getStreamLine(self, float x, float y, int maxSegments, float minSpeed):
         cdef float segLen = 0.2
-        points = [(x, y)]
+        points = [(x, y, 0)]
+
+        if x >= self.width - 2 or y >= self.height - 2:
+            return points
 
         for n in range(maxSegments):
             v_x, v_y = self.sampleVelocity(x, y)
@@ -204,9 +226,9 @@ cdef class Fluid:
             y += v_y / v * segLen
             #x += v_x * 0.01
             #y += v_y * 0.01
-            if x >= self.width - 2 or y >= self.height - 2:
+            if x >= self.width / self.granularity - 2 or y >= self.height / self.granularity - 2:
                 break
 
-            points.append((x, y))
+            points.append((x, y, v))
 
         return points
