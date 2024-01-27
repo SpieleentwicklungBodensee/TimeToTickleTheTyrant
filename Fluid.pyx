@@ -136,6 +136,7 @@ cdef class Fluid:
         steps = int((dt + self.remainingTime) * stepsPerSecond)
         self.remainingTime = (dt + self.remainingTime) - steps / stepsPerSecond
 
+        cdef int x, y
         for y in range(self.height):
             for x in range(self.width):
                 if self.space[x, y] == 0:
