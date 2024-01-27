@@ -57,6 +57,7 @@ class Application:
 
         self.feather = None
         self.cloud = None
+        self.windSources = []
 
         self.loadGraphics()
         self.loadLevel(self.level_i)
@@ -103,6 +104,7 @@ class Application:
         TILES['p'] = pygame.image.load('gfx/tile_pipe_p.png')
         TILES['-'] = pygame.image.load('gfx/tile_pipe_-.png')
         TILES['l'] = pygame.image.load('gfx/tile_pipe_l.png')
+        TILES['X'] = (pygame.image.load('gfx/tile_grill1.png'), pygame.image.load('gfx/tile_grill2.png'), pygame.image.load('gfx/tile_grill3.png'))
         # TILES['I'] = pygame.image.load('gfx/tile_housetop_m.png')
         # TILES['J'] = pygame.image.load('gfx/tile_housetop_r.png')
 
@@ -128,6 +130,7 @@ class Application:
                    ]
 
         self.font = BitmapFont('gfx/heimatfont.png', font_w=8, font_h=8, line_h=10, scr_w=SCR_W, scr_h=SCR_H)
+        self.bigfont = BitmapFont('gfx/heimatfont.png', font_w=8, font_h=8, line_h=10, zoom=3, scr_w=SCR_W, scr_h=SCR_H)
 
     def loadLevel(self, level_name):
         print('loading level: ' + str(level_name))
@@ -153,6 +156,8 @@ class Application:
         self.smoke = pygame.Surface((TILE_W * self.lev_w, TILE_H * self.lev_h), pygame.SRCALPHA)
         self.updateLevelWind()
 
+        self.updateWindSources()
+
         feather_spawn = None
         for y in range(self.lev_h):
             for x in range(self.lev_w):
@@ -167,6 +172,15 @@ class Application:
             self.feather.pos = self.cam.gridToScreen(*feather_spawn) + gridCenterOffset
 
         self.cloud = Cloud(CLOUDS, self.cam)
+
+    def updateWindSources(self):
+        self.windSources.clear()
+
+        for y in range(self.lev_h):
+            for x in range(self.lev_w):
+                if self.level[y][x] == "X": # heat grill
+                    self.windSources.append((x, y-1, -1, 0))
+
 
     def updateLevelWind(self):
         for y in range(self.lev_h):
@@ -229,7 +243,9 @@ class Application:
         t = TILES[tile]
 
         if type(t) is tuple:
-            t = t[0] if int(time.time() * 1000) % 500 < 250 else t[1]
+            i = int(self.frame_cnt / 12) % len(t)
+            t = t[i]
+
         self.screen.blit(t, self.cam.gridToScreen(x, y))
 
     def setTile(self, tile, x, y):
@@ -282,6 +298,10 @@ class Application:
 
         # show help
         if SHOW_DEBUG_INFO:
+            if self.frame_cnt % 32 < 16:
+                self.bigfont.drawText(self.screen, 'DEBUG VIEW', x=1, y=2)
+
+            # show help screen
             self.helpScreen.fill((00, 0, 0, 64))
 
             self.font.drawText(self.helpScreen, 'LEVEL %02i (%02ix%02i)' % (self.level_i, self.lev_w, self.lev_h), x=1, y=1)
@@ -446,6 +466,9 @@ class Application:
             self.debugTilePos = (bx, by)
         else:
             self.debugTilePos = None
+
+        for xpos, ypos, xblow, yblow in self.windSources:
+            self.fluid.setVelocity(xpos, ypos, (xblow, yblow))
 
         if self.edit_mode:
             self.updateEdit()
