@@ -213,8 +213,8 @@ class Application:
         self.screen.blit(self.smoke, (0, 0))
 
     def updateStreamLines(self):
-        if self.frame_cnt % 5 != 0:
-            return
+        #if self.frame_cnt % 5 != 0:
+        #    return
 
         numSegs = 15
 
