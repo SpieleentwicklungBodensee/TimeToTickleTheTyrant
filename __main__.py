@@ -64,6 +64,7 @@ class Application:
         self.feather_anim_rot = 0
         self.feather_anim_rot_dir = 2
 
+        self.streamLines = pygame.Surface((SCR_W, SCR_H), pygame.SRCALPHA)
 
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
