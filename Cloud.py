@@ -8,8 +8,9 @@ DRAG = .0005
 
 
 class Cloud:
-    def __init__(self, sprites):
+    def __init__(self, sprites, cam):
         self.sprites = sprites
+        self.cam = cam
         self.v = np.array([0., 0.])
         self.pos = np.array([0., 0.])
         self.anim_cnt = 0
@@ -75,15 +76,16 @@ class Cloud:
         else:
             self.setLookDirection(-1)
 
-    def getRender(self):
+    def render(self, screen):
         sprite = self.sprites[self.anim_cnt]
 
         if self.lookDirection > 0:
             sprite = pygame.transform.flip(sprite, True, False)
 
         sprite = pygame.transform.rotate(sprite, self.anim_rot)
+        renderpos = (self.pos[0] - self.cam.pos_x - sprite.get_width() / 2, self.pos[1] - self.cam.pos_y - sprite.get_height() / 2)
 
-        return sprite
+        screen.blit(sprite, renderpos)
 
     def startBlowing(self, frame_cnt):
         if self.blowing:

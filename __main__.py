@@ -164,7 +164,7 @@ class Application:
             gridCenterOffset = np.array([TILE_W/2, TILE_H/2])
             self.feather.pos = self.cam.gridToScreen(*feather_spawn) + gridCenterOffset
 
-        self.cloud = Cloud(CLOUDS)
+        self.cloud = Cloud(CLOUDS, self.cam)
 
     def updateLevelWind(self):
         for y in range(self.lev_h):
@@ -275,9 +275,7 @@ class Application:
 
         # render cloud (player)
         if not self.edit_mode:
-            cloud = self.cloud.getRender()
-            cx, cy = self.mouse_pos
-            self.screen.blit(cloud, (cx, cy))
+            self.cloud.render(self.screen)
 
         # show help
         if SHOW_DEBUG_INFO:
@@ -306,7 +304,7 @@ class Application:
 
             # show point positions
             px, py = self.cam.worldToScreen(*self.cloud.pos)
-            self.screen.set_at((px, py), (255, 255, 0))
+            self.screen.set_at((px, py), (255, 0, 255))
 
             px, py = self.cam.worldToScreen(*self.feather.pos)
             self.screen.set_at((px, py), (255, 128, 0))
