@@ -144,7 +144,7 @@ class Application:
             for x in range(self.lev_w):
                 if self.level[y][x] == '#':
                     self.fluid.space[x + 1, y + 1] = 0
-                    self.fluid.velocity[x, y] = (0.0, 0.0)
+                    self.fluid.velocity[x + 1, y + 1] = (0.0, 0.0)
                 else:
                     self.fluid.space[x + 1, y + 1] = 1
 
