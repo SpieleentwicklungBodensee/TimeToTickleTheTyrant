@@ -7,7 +7,7 @@ import pygame
 
 GRAVITY = np.array([0., 16.])
 DRAG = .0005
-COLLISION_BOX = 12
+COLLISION_RADIUS = 12 # not an actual radius. Half the collision square's height
 
 
 class Feather:
@@ -54,13 +54,12 @@ class Feather:
 
     def updatePosition(self, dt):
         potential_pos = self.pos + self.v * dt
-        if self.isInWall(potential_pos):
-            pot_x,pot_y = self.cam.worldToGrid(potential_pos[0], potential_pos[1])
-            x,y = self.cam.worldToGrid(self.pos[0], self.pos[1])
-            if x - pot_x != 0:  # when wall is hit, reset velocity
-                self.v = np.array([0., self.v[1]])
-            if y - pot_y != 0:
-                self.v = np.array([self.v[0], 0.])
+        nbr_wall = self.detectWall(potential_pos)
+        if nbr_wall is not None:
+            if nbr_wall[0] != 0: # left/right wall
+                self.v[0] = -self.v[0] /10  # fudge v to not get stuck in wall
+            if nbr_wall[1] != 0: # top/bottom wall
+                self.v[1] = -self.v[1] /10  # fudge v to not get stuck in wall
         else:
             self.pos = potential_pos
 
@@ -73,8 +72,19 @@ class Feather:
 
     def isInWall(self, potential_pos):
         collision_point = np.copy(potential_pos)
-        collision_point[0] += math.copysign(COLLISION_BOX, self.v[0])
-        collision_point[1] += math.copysign(COLLISION_BOX, self.v[1])
+        collision_point[0] += math.copysign(COLLISION_RADIUS, self.v[0]) if self.v[0] != 0 else 0
+        collision_point[1] += math.copysign(COLLISION_RADIUS, self.v[1]) if self.v[1] != 0 else 0
         x,y = self.cam.worldToGrid(collision_point[0], collision_point[1])
         tile = self.level[y][x]
         return tile == "#"
+
+    def detectWall(self, potential_pos):
+        collision_point = np.copy(potential_pos)
+        collision_point[0] += math.copysign(COLLISION_RADIUS, self.v[0]) if self.v[0] != 0 else 0
+        collision_point[1] += math.copysign(COLLISION_RADIUS, self.v[1]) if self.v[1] != 0 else 0
+        x,y = self.cam.worldToGrid(collision_point[0], collision_point[1])
+        tile = self.level[y][x]
+        if tile == "#":
+            xcoord,ycoord = self.cam.worldToGrid(self.pos[0], self.pos[1])
+            return x - xcoord, y - ycoord
+        return None
