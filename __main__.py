@@ -149,7 +149,7 @@ class Application:
         self.lev_h = len(self.level)
         self.cam.reset()
 
-        self.fluid = Fluid(self.lev_w, self.lev_h)
+        self.fluid = Fluid(self.lev_w, self.lev_h, 1)
         self.smoke = pygame.Surface((TILE_W * self.lev_w, TILE_H * self.lev_h), pygame.SRCALPHA)
         self.updateLevelWind()
 
@@ -211,16 +211,17 @@ class Application:
                 y = j + 0.5
 
                 points = []
-                for (x_, y_) in self.fluid.getStreamLine(x, y, 15, 0.1):
+                for (x_, y_, v) in self.fluid.getStreamLine(x, y, 15, 0.02):
                     if x_ >= self.lev_w or y_ >= self.lev_h:
                         continue
 
                     # todo filter points in wall
-                    points.append((x_, y_))
+                    points.append((x_, y_, v))
 
                 if len(points) > 1:
-                    points = [self.cam.gridToScreen(*p) for p in points]
-                    pygame.draw.lines(self.streamLines, pygame.Color(255, 255, 255), False, points)
+                    points = [(self.cam.gridToScreen(x_, y_), v) for (x_, y_, v) in points]
+                    points = [p[0] for p in points]
+                    pygame.draw.lines(self.streamLines, pygame.Color(255, 255, 255, 255), False, points)
 
         self.screen.blit(self.streamLines, (0, 0))
 
