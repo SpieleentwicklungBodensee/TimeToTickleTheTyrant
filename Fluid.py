@@ -59,6 +59,11 @@ class Fluid:
         steps = int((dt + self.remainingTime) * stepsPerSecond)
         self.remainingTime = (dt + self.remainingTime) - steps / stepsPerSecond
 
+        for y in range(self.height):
+            for x in range(self.width):
+                if self.space[x, y] == 0 and (self.velocity[x, y] != (0.0, 0.0)).any():
+                    print('error', x, y, self.velocity[x, y])
+
         for i in range(steps):
             self.solveIncompressibility()
         self.extrapolate()
