@@ -86,8 +86,8 @@ class Application:
         TILES['*'] = pygame.image.load('gfx/tile_air.png') # feather spawn point, render as empty tile
         TILES['/'] = pygame.image.load('gfx/tile_air__rain.png')
         TILES['F'] = (pygame.image.load('gfx/tile_feet.png'), pygame.image.load('gfx/tile_feet2.png'))
-        TILES['l'] = pygame.image.load('gfx/tile_lantern.png')
-        TILES['L'] = pygame.image.load('gfx/tile_lanterntop.png')
+        TILES['a'] = pygame.image.load('gfx/tile_lantern.png')
+        TILES['A'] = pygame.image.load('gfx/tile_lanterntop.png')
         TILES['_'] = pygame.image.load('gfx/tile_floor.png')
         TILES['g'] = pygame.image.load('gfx/tile_grill.png')
         TILES['T'] = pygame.image.load('gfx/tile_housetop_antenna.png')
