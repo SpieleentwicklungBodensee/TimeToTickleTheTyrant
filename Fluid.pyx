@@ -74,8 +74,8 @@ cdef class Fluid:
                 #p *= overRelaxation
 
                 self.velocity[x, y, 0] -= self.space[x - 1, y] * p
-                self.velocity[x, y, 1] -= self.space[x, y - 1] * p
                 self.velocity[x + 1, y, 0] += self.space[x + 1, y] * p
+                self.velocity[x, y, 1] -= self.space[x, y - 1] * p
                 self.velocity[x, y + 1, 1] += self.space[x, y + 1] * p
 
     cdef extrapolate(self):
