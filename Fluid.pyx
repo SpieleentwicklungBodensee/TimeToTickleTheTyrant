@@ -1,10 +1,11 @@
 # cython: language_level=3
 
 import numpy as np
-import math
+
+from libc.math cimport floor
 
 cimport cython
-from libc.stdint cimport int8_t
+from libc.stdint cimport int8_t, uint32_t
 
 VELOCITY_X = 0
 VELOCITY_Y = 1
@@ -13,9 +14,9 @@ SMOKE = 2
 cdef class Fluid:
     cdef int width
     cdef int height
-    cdef double[:, :, :] velocity
-    cdef int8_t[:, :] space
-    cdef double[:, :] smoke
+    cdef double[:, :, ::1] velocity
+    cdef int8_t[:, ::1] space
+    cdef double[:, ::1] smoke
     cdef double remainingTime
 
     def __init__(self, width, height):
@@ -33,7 +34,7 @@ cdef class Fluid:
         self.velocity[x, y, 0] = v[0]
         self.velocity[x, y, 1] = v[1]
 
-    def solveIncompressibility(self):
+    cdef solveIncompressibility(self):
         cdef int x, y, s
 
         for y in range(1, self.height - 1):
@@ -58,7 +59,7 @@ cdef class Fluid:
                 self.velocity[x + 1, y, 0] += self.space[x + 1, y] * p
                 self.velocity[x, y + 1, 1] += self.space[x, y + 1] * p
 
-    def extrapolate(self):
+    cdef extrapolate(self):
         for x in range(self.width):
             self.velocity[x, 0, 0] = self.velocity[x, 1, 0]
             self.velocity[x, -1, 0] = self.velocity[x, -2, 0]
@@ -67,10 +68,7 @@ cdef class Fluid:
             self.velocity[0, y, 1] = self.velocity[1, y, 1]
             self.velocity[-1, y, 1] = self.velocity[-2, y, 1]
 
-    def avgVelocity(self, _x, _y):
-        cdef int x = _x
-        cdef int y = _y
-
+    cdef (float, float) avgVelocity(self, int x, int y):
         vx = (self.velocity[x - 1, y - 1, 0] + self.velocity[x, y - 1, 0]
             + self.velocity[x - 1, y, 0] + self.velocity[x, y, 0]) / 4.0
 
@@ -79,7 +77,7 @@ cdef class Fluid:
 
         return vx, vy
 
-    def advectVelocity(self, dt):
+    cdef advectVelocity(self, int dt):
         newVelocity = self.velocity.copy()
 
         for y in range(1, self.height):
@@ -96,7 +94,7 @@ cdef class Fluid:
 
         self.velocity = newVelocity
 
-    def advectSmoke(self, dt):
+    cdef advectSmoke(self, int dt):
         newSmoke = self.smoke.copy()
 
         for x in range(1, self.width - 1):
@@ -130,15 +128,17 @@ cdef class Fluid:
         self.advectVelocity(dt)
         #self.advectSmoke(dt)
 
-    def sampleField(self, x, y, field):
+    cpdef float sampleField(self, float x, float y, field):
+        cdef uint32_t x0, y0
+
         x -= 0.5
         y -= 0.5
 
         x = max(0, min(x, self.width - 0.001))
         y = max(0, min(y, self.height - 0.001))
 
-        x0 = math.floor(x)
-        y0 = math.floor(y)
+        x0 = <uint32_t>floor(x)
+        y0 = <uint32_t>floor(y)
         x1 = x0 + 1
         y1 = y0 + 1
         tx = x - x0
@@ -157,15 +157,17 @@ cdef class Fluid:
                     tx*ty * self.velocity[x1, y1, 1] +
                     sx*ty * self.velocity[x0, y1, 1])
 
-    def sampleVelocity(self, x, y):
+    cpdef (float, float) sampleVelocity(self, float x, float y):
+        cdef uint32_t x0, y0
+
         x -= 0.5
         y -= 0.5
 
         x = max(0, min(x, self.width - 0.001))
         y = max(0, min(y, self.height - 0.001))
 
-        x0 = math.floor(x)
-        y0 = math.floor(y)
+        x0 = <uint32_t>floor(x)
+        y0 = <uint32_t>floor(y)
         x1 = x0 + 1
         y1 = y0 + 1
         tx = x - x0
