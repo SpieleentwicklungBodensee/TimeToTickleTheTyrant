@@ -7,11 +7,13 @@ UPPERCASE_MODE = False
 
 
 class BitmapFont(object):
-    def __init__(self, filename, font_w=8, font_h=8, colors=None, zoom=1, scr_w=320, scr_h=240):
+    def __init__(self, filename, font_w=8, font_h=8, line_h=None, colors=None, zoom=1, scr_w=320, scr_h=240):
         self.lastxpos, self.lastypos = 0, 0
 
         self.font_w = font_w
         self.font_h = font_h
+
+        self.line_h = line_h if line_h is not None else font_h
         
         self.scr_w = scr_w
         self.scr_h = scr_h
@@ -83,7 +85,7 @@ class BitmapFont(object):
             for i, c in enumerate(text):
                 grabx = (ord(c) - 32) * self.font_w
                 blitx = (x + i) * self.font_w
-                blity = y * self.font_h + (self.font_h - self.font_h + 1) / 2
+                blity = y * self.line_h + (self.line_h)
 
                 output.blit(self.fonts[fgcolor], (blitx, blity), (grabx, 0, self.font_w, self.font_h))
 

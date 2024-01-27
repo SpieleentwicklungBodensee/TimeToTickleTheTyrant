@@ -99,7 +99,7 @@ class Application:
         TILES['q'] = pygame.image.load('gfx/tile_pipe_q.png')
         TILES['p'] = pygame.image.load('gfx/tile_pipe_p.png')
         TILES['-'] = pygame.image.load('gfx/tile_pipe_-.png')
-        TILES['|'] = pygame.image.load('gfx/tile_pipe_|.png')
+        TILES['l'] = pygame.image.load('gfx/tile_pipe_l.png')
         # TILES['I'] = pygame.image.load('gfx/tile_housetop_m.png')
         # TILES['J'] = pygame.image.load('gfx/tile_housetop_r.png')
 
@@ -124,7 +124,7 @@ class Application:
                    pygame.image.load('gfx/cloud7.png'),
                    ]
 
-        self.font = BitmapFont('gfx/heimatfont.png', font_w=8, font_h=8, scr_w=SCR_W, scr_h=SCR_H)
+        self.font = BitmapFont('gfx/heimatfont.png', font_w=8, font_h=8, line_h=10, scr_w=SCR_W, scr_h=SCR_H)
 
     def loadLevel(self, level_name):
         print('loading level: ' + str(level_name))
