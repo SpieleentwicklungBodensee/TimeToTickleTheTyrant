@@ -43,14 +43,26 @@ class Fluid:
             self.velocity[0, y, 1] = self.velocity[1, y, 1]
             self.velocity[-1, y, 1] = self.velocity[-2, y, 1]
 
+    def avgVelocity(self, x, y):
+        return (self.velocity[x - 1, y - 1] + self.velocity[x, y - 1]
+              + self.velocity[x - 1, y] + self.velocity[x, y]) / 4
+
     def advectVelocity(self, dt):
+        newVelocity = self.velocity.copy()
+
         for y in range(1, self.height):
             for x in range(1, self.width):
                 if self.space[x, y] and self.space[x - 1, y] and y < self.height - 1:
-                    pass
+                    nx = x - dt * self.velocity[x, y, 0]
+                    ny = y - dt * self.avgVelocity(x, y)[1]
+                    newVelocity[x, y, 0] = self.sampleField(nx, ny, VELOCITY_X)
 
                 if self.space[x, y] and self.space[x, y - 1] and x < self.width - 1:
-                    pass
+                    nx = x - dt * self.avgVelocity(x, y)[0]
+                    ny = y - dt * self.velocity[x, y, 1]
+                    newVelocity[x, y, 1] = self.sampleField(nx, ny, VELOCITY_Y)
+
+        self.velocity = newVelocity
 
     def simulate(self, dt):
         stepsPerSecond = 100

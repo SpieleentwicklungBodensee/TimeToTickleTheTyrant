@@ -64,6 +64,12 @@ class Application:
 
         self.streamLines = pygame.Surface((SCR_W, SCR_H), pygame.SRCALPHA)
 
+        self.edit_mode = False
+        self.edit_tile = '#'
+        self.edit_tile_i = 0
+        self.edit_draw = False
+        self.edit_delete = False
+
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
         TILES[' '] = pygame.image.load('gfx/tile_air.png')
@@ -119,11 +125,11 @@ class Application:
         self.cam_y = 0
 
         self.fluid = Fluid(self.lev_w + 2, self.lev_h + 2)
+        self.updateLevelWind()
 
         feather_spawn = None
         for y in range(self.lev_h):
             for x in range(self.lev_w):
-                self.fluid.space[x + 1, y + 1] = 0 if self.level[y][x] == '#' else 1
                 if self.level[y][x] == "*":  # look for feather spawn
                     feather_spawn = (x, y)
 
@@ -133,6 +139,21 @@ class Application:
             self.feather = Feather(FEATHERS)
             self.feather.pos = self.gridToScreen(*feather_spawn)
 
+    def updateLevelWind(self):
+        for y in range(self.lev_h):
+            for x in range(self.lev_w):
+                if self.level[y][x] == '#':
+                    self.fluid.space[x + 1, y + 1] = 0
+                    self.fluid.velocity[x, y] = (0.0, 0.0)
+                else:
+                    self.fluid.space[x + 1, y + 1] = 1
+
+    def saveLevel(self, level_name):
+        print('saving level: ' + str(level_name))
+
+        with open(f"levels/{level_name}.lvl", "w") as f:
+            for line in self.level:
+                f.write(line + '\n')
 
     def showStreamLines(self):
         self.fluid.velocity[3, 3] = (10, 4)
@@ -179,6 +200,11 @@ class Application:
             t = t[0] if int(time.time() * 1000) % 500 < 250 else t[1]
         self.screen.blit(t, self.gridToScreen(x, y))
 
+    def setTile(self, tile, x, y):
+        line = self.level[y]
+        line = line[:x] + tile + line[x+1:]
+        self.level[y] = line
+
     def gridToScreen(self, x, y):
         return x * TILE_W - self.cam_x, y * TILE_H - self.cam_y
 
@@ -198,6 +224,17 @@ class Application:
         if self.cam_y > self.lev_h * TILE_H - SCR_H:
             self.cam_y = self.lev_h * TILE_H - SCR_H
 
+    def updateEdit(self):
+        if self.edit_draw:
+            # set tile in grid
+            mx, my = self.screenToGrid(*self.mouse_pos)
+            self.setTile(self.edit_tile, mx, my)
+
+        if self.edit_delete:
+            # delete / set empty tile in grid
+            mx, my = self.screenToGrid(*self.mouse_pos)
+            self.setTile(' ', mx, my)
+
     def render(self):
         self.screen.fill((40, 60, 80))
 
@@ -213,14 +250,38 @@ class Application:
         feather = self.feather.getRender()
         self.screen.blit(feather, [self.feather.pos[0] - self.cam_x, self.feather.pos[1] - self.cam_y])
 
+        # show wind
+        self.showStreamLines()
+
+        # show help
         if SHOW_DEBUG_INFO:
+            pygame.draw.rect(self.screen, (40, 60, 80, 64), (SCR_W / 4, TILE_H, SCR_W / 2, TILE_H * 2.75))
+
             self.font.drawText(self.screen, 'LEV %02i' % self.level_i, x=1, y=1)
             self.font.drawText(self.screen, '%02ix%02i' % (self.lev_w, self.lev_h), x=1, y=2)
             self.font.centerText(self.screen, 'WASD = SCROLL AROUND', y=5)
             self.font.centerText(self.screen, 'F1/F2 = PREV/NEXT LEVEL', y=7)
-            self.font.centerText(self.screen, 'F12 = SHOW/HIDE THIS TEXT', y=9)
+            self.font.centerText(self.screen, 'F10 = TOGGLE EDIT MODE', y=9)
+            self.font.centerText(self.screen, 'F12 = SHOW/HIDE THIS HELP', y=11)
 
-        self.showStreamLines()
+            if self.edit_mode:
+                self.font.centerText(self.screen, 'F9 = SAVE (OVERWRITE)', y=13)
+
+        # show edit cursor
+        if self.edit_mode:
+            cursor = self.edit_tile
+            if self.edit_delete:
+                cursor = ' '
+
+            mx, my = self.screenToGrid(*self.mouse_pos)
+            self.drawTile(cursor, mx, my)
+            if int(time.time() * 1000) % 600 < 300:
+                color = (255, 255, 255)
+            else:
+                color = (0, 0, 0)
+
+            rx, ry = self.gridToScreen(mx, my)
+            pygame.draw.rect(self.screen, color, (rx, ry, TILE_W, TILE_H), width=1)
 
         pygame.display.flip()
 
@@ -249,6 +310,16 @@ class Application:
                 elif e.key == pygame.K_F12:
                     global SHOW_DEBUG_INFO
                     SHOW_DEBUG_INFO = not SHOW_DEBUG_INFO
+                elif e.key == pygame.K_F10:
+                    self.edit_mode = not self.edit_mode
+                elif e.key == pygame.K_F9:
+                    if self.edit_mode:
+                        self.saveLevel(self.level_i)
+
+                        # quick and dirty flash
+                        self.screen.fill((255, 255, 255))
+                        pygame.display.flip()
+                        time.sleep(0.2)
 
                 elif e.key == pygame.K_RETURN:
                     if modstate & pygame.KMOD_ALT:
@@ -266,6 +337,26 @@ class Application:
             elif e.type == pygame.MOUSEBUTTONUP:
                 # TODO do relevant things on mouse click
                 print(f"clicked on grid position: {self.screenToGrid(*self.mouse_pos)}")
+
+                if e.button == 1:       # LEFT mousebutton
+                    if self.edit_draw:
+                        self.edit_draw = False
+
+                elif e.button == 3:     # RIGHT mousebutton
+                    if self.edit_delete:
+                        self.edit_delete = False
+
+            elif e.type == pygame.MOUSEBUTTONDOWN:
+                if e.button == 1:       # LEFT mousebutton
+                    self.edit_draw = True
+                elif e.button == 3:     # RIGHT mousebutton
+                    self.edit_delete = True
+
+            elif e.type == pygame.MOUSEWHEEL:
+                direction = ((e.x + e.y) * -1)
+                self.edit_tile_i += direction
+                self.edit_tile_i %= len(TILES)
+                self.edit_tile = list(TILES.keys())[self.edit_tile_i]
 
             elif e.type == pygame.KEYUP:
                 if e.key == pygame.K_w:
@@ -288,6 +379,9 @@ class Application:
         self.fluid.simulate(dt)
         self.updateCamera()
         self.feather.update(dt, self.frame_cnt)
+
+        if self.edit_mode:
+            self.updateEdit()
 
     def run(self):
         self.running = True
