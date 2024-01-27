@@ -74,8 +74,8 @@ cdef class Fluid:
                 #p *= overRelaxation
 
                 self.velocity[x, y, 0] -= self.space[x - 1, y] * p
-                self.velocity[x, y, 1] -= self.space[x, y - 1] * p
                 self.velocity[x + 1, y, 0] += self.space[x + 1, y] * p
+                self.velocity[x, y, 1] -= self.space[x, y - 1] * p
                 self.velocity[x, y + 1, 1] += self.space[x, y + 1] * p
 
     cdef extrapolate(self):
@@ -87,14 +87,13 @@ cdef class Fluid:
             self.velocity[0, y, 1] = self.velocity[1, y, 1]
             self.velocity[-1, y, 1] = self.velocity[-2, y, 1]
 
-    cdef (float, float) avgVelocity(self, int x, int y):
-        vx = (self.velocity[x - 1, y - 1, 0] + self.velocity[x, y - 1, 0]
-            + self.velocity[x - 1, y, 0] + self.velocity[x, y, 0]) / 4.0
+    cdef float avgVelocityX(self, int x, int y):
+        return (self.velocity[x, y - 1, 0] + self.velocity[x, y, 0]
+              + self.velocity[x + 1, y - 1, 0] + self.velocity[x + 1, y, 0]) / 4.0
 
-        vy = (self.velocity[x - 1, y - 1, 1] + self.velocity[x, y - 1, 1]
-            + self.velocity[x - 1, y, 1] + self.velocity[x, y, 1]) / 4.0
-
-        return vx, vy
+    cdef float avgVelocityY(self, int x, int y):
+        return (self.velocity[x - 1, y, 1] + self.velocity[x, y, 1]
+              + self.velocity[x - 1, y + 1, 1] + self.velocity[x, y + 1, 1]) / 4.0
 
     cdef advectVelocity(self, int dt):
         newVelocity = self.velocity.copy()
@@ -103,11 +102,11 @@ cdef class Fluid:
             for x in range(1, self.width):
                 if self.space[x, y] and self.space[x - 1, y] and y < self.height - 1:
                     nx = x - dt * self.velocity[x, y, 0]
-                    ny = y - dt * self.avgVelocity(x, y)[1]
+                    ny = y - dt * self.avgVelocityY(x, y)
                     newVelocity[x, y, 0] = self.sampleField(nx, ny, VELOCITY_X)
 
                 if self.space[x, y] and self.space[x, y - 1] and x < self.width - 1:
-                    nx = x - dt * self.avgVelocity(x, y)[0]
+                    nx = x - dt * self.avgVelocityX(x, y)
                     ny = y - dt * self.velocity[x, y, 1]
                     newVelocity[x, y, 1] = self.sampleField(nx, ny, VELOCITY_Y)
 
@@ -136,6 +135,7 @@ cdef class Fluid:
         steps = int((dt + self.remainingTime) * stepsPerSecond)
         self.remainingTime = (dt + self.remainingTime) - steps / stepsPerSecond
 
+        cdef int x, y
         for y in range(self.height):
             for x in range(self.width):
                 if self.space[x, y] == 0:
@@ -226,7 +226,7 @@ cdef class Fluid:
             v_x, v_y = self.sampleVelocity(x, y)
             v = sqrt(v_x**2 + v_y**2)
 
-            if v < minSpeed:
+            if v < minSpeed or v <= 0.0:
                 break
 
             x += v_x / v * segLen

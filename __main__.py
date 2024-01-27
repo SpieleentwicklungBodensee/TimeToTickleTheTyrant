@@ -87,8 +87,8 @@ class Application:
         TILES['*'] = pygame.image.load('gfx/tile_air.png') # feather spawn point, render as empty tile
         TILES['/'] = pygame.image.load('gfx/tile_air__rain.png')
         TILES['F'] = (pygame.image.load('gfx/tile_feet.png'), pygame.image.load('gfx/tile_feet2.png'))
-        TILES['l'] = pygame.image.load('gfx/tile_lantern.png')
-        TILES['L'] = pygame.image.load('gfx/tile_lanterntop.png')
+        TILES['a'] = pygame.image.load('gfx/tile_lantern.png')
+        TILES['A'] = pygame.image.load('gfx/tile_lanterntop.png')
         TILES['_'] = pygame.image.load('gfx/tile_floor.png')
         TILES['g'] = pygame.image.load('gfx/tile_grill.png')
         TILES['T'] = pygame.image.load('gfx/tile_housetop_antenna.png')
@@ -212,7 +212,10 @@ class Application:
 
         self.screen.blit(self.smoke, (0, 0))
 
-    def showStreamLines(self):
+    def updateStreamLines(self):
+        if self.frame_cnt % 5 != 0:
+            return
+
         numSegs = 15
 
         minSpeed = 0.1
@@ -235,8 +238,10 @@ class Application:
                 if len(points) > 1:
                     points = [(self.cam.gridToScreen(x_, y_), v) for (x_, y_, v) in points]
                     points = [p[0] for p in points]
-                    pygame.draw.lines(self.streamLines, pygame.Color(255, 255, 255, 255), False, points)
+                    pygame.draw.aalines(self.streamLines, pygame.Color(255, 255, 255, 255), False, points)
 
+    def showStreamLines(self):
+        self.updateStreamLines()
         self.screen.blit(self.streamLines, (0, 0))
 
     def drawTile(self, tile, x, y):
