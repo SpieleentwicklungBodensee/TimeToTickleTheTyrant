@@ -271,7 +271,7 @@ class Application:
 
         # show wind
         if SHOW_STREAMLINES:
-            self.fluid.setVelocity(3, 3, (10, 4))
+            #self.fluid.setVelocity(3, 3, (10, 4))
             #self.fluid.smoke[3, 3] = 1.0
             self.showStreamLines()
             #self.showSmoke()
@@ -426,6 +426,10 @@ class Application:
         self.updateCamera()
         self.feather.update(dt, self.frame_cnt, self.fluid)
         self.cloud.update(dt, self.frame_cnt)
+
+        if self.cloud.isBlowing():
+            cx, cy = self.cam.screenToGrid(*self.mouse_pos)
+            self.fluid.setVelocity(cx + 1, cy + 1, (-4, 0))
 
         if self.edit_mode:
             self.updateEdit()

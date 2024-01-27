@@ -78,3 +78,9 @@ class Cloud:
     def stopBlowing(self, frame_cnt):
         self.blowing = False
         self.anim_cnt = 4
+
+    def isBlowing(self):
+        if self.anim_cnt > 4:
+            return True
+
+        return False
