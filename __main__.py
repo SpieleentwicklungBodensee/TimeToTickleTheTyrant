@@ -8,6 +8,7 @@ import pygame
 import os
 
 from Feather import Feather
+from Cloud import Cloud
 from bitmapfont import BitmapFont
 import time
 from Fluid import Fluid
@@ -23,6 +24,7 @@ SCR_W, SCR_H = 640, 360
 
 TILES = {}
 FEATHERS = []
+CLOUDS = []
 
 TILE_W = 32
 TILE_H = 32
@@ -50,8 +52,11 @@ class Application:
             flags |= pygame.FULLSCREEN
 
         self.screen = pygame.display.set_mode((SCR_W, SCR_H), flags=flags,vsync=1)
+        pygame.mouse.set_visible(False)
 
         self.feather = None
+        self.cloud = None
+
         self.loadGraphics()
         self.loadLevel(self.level_i)
 
@@ -103,6 +108,16 @@ class Application:
                      pygame.image.load('gfx/feather8.png'),
                      ]
 
+        global CLOUDS
+        CLOUDS += [pygame.image.load('gfx/cloud1.png'),
+                   pygame.image.load('gfx/cloud2.png'),
+                   pygame.image.load('gfx/cloud3.png'),
+                   pygame.image.load('gfx/cloud4.png'),
+                   pygame.image.load('gfx/cloud5.png'),
+                   pygame.image.load('gfx/cloud6.png'),
+                   pygame.image.load('gfx/cloud7.png'),
+                   ]
+
         self.font = BitmapFont('gfx/heimatfont.png', font_w=8, font_h=8, scr_w=SCR_W, scr_h=SCR_H)
 
     def loadLevel(self, level_name):
@@ -140,6 +155,8 @@ class Application:
         else:
             self.feather = Feather(FEATHERS)
             self.feather.pos = self.gridToScreen(*feather_spawn)
+
+        self.cloud = Cloud(CLOUDS)
 
     def updateLevelWind(self):
         for y in range(self.lev_h):
@@ -262,6 +279,11 @@ class Application:
         # show wind
         self.showStreamLines()
 
+        # render cloud (player)
+        cloud = self.cloud.getRender()
+        cx, cy = self.mouse_pos
+        self.screen.blit(cloud, (cx, cy))
+
         # show help
         if SHOW_DEBUG_INFO:
             #pygame.draw.rect(self.helpScreen, (40, 60, 80, 64), (SCR_W / 4, TILE_H, SCR_W / 2, TILE_H * 2.75))
@@ -353,8 +375,12 @@ class Application:
                 print(f"clicked on grid position: {self.screenToGrid(*self.mouse_pos)}")
 
                 if e.button == 1:       # LEFT mousebutton
-                    if self.edit_draw:
-                        self.edit_draw = False
+                    if self.edit_mode:
+                        if self.edit_draw:
+                            self.edit_draw = False
+
+                    else:
+                        self.cloud.stopBlowing(self.frame_cnt)
 
                 elif e.button == 3:     # RIGHT mousebutton
                     if self.edit_delete:
@@ -362,7 +388,11 @@ class Application:
 
             elif e.type == pygame.MOUSEBUTTONDOWN:
                 if e.button == 1:       # LEFT mousebutton
-                    self.edit_draw = True
+                    if self.edit_mode:
+                        self.edit_draw = True
+                    else:
+                        self.cloud.startBlowing(self.frame_cnt)
+
                 elif e.button == 3:     # RIGHT mousebutton
                     self.edit_delete = True
 
@@ -393,6 +423,7 @@ class Application:
         self.fluid.simulate(dt)
         self.updateCamera()
         self.feather.update(dt, self.frame_cnt)
+        self.cloud.update(dt, self.frame_cnt)
 
         if self.edit_mode:
             self.updateEdit()
