@@ -66,6 +66,8 @@ class Application:
         self.scroll_xdir = 0
         self.scroll_ydir = 0
 
+        self.backgroundColor = (64, 96, 128)
+
         self.streamLines = pygame.Surface((SCR_W, SCR_H), pygame.SRCALPHA)
 
         self.edit_mode = False
@@ -254,7 +256,7 @@ class Application:
             self.updateLevelWind()
 
     def render(self):
-        self.screen.fill((40, 60, 80))
+        self.screen.fill(self.backgroundColor)
 
         # render level
         for y in range(self.lev_h):
@@ -279,7 +281,6 @@ class Application:
 
         # show help
         if SHOW_DEBUG_INFO:
-            #pygame.draw.rect(self.helpScreen, (40, 60, 80, 64), (SCR_W / 4, TILE_H, SCR_W / 2, TILE_H * 2.75))
             self.helpScreen.fill((00, 0, 0, 64))
 
             self.font.drawText(self.helpScreen, 'LEVEL %02i (%02ix%02i)' % (self.level_i, self.lev_w, self.lev_h), x=1, y=1)
