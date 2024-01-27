@@ -75,6 +75,8 @@ class Application:
 
         self.helpScreen = pygame.Surface((SCR_W / 3, 12 * 8), pygame.SRCALPHA)
 
+        self.debugTilePos = None
+
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
         TILES[' '] = pygame.image.load('gfx/tile_air.png')
@@ -301,6 +303,11 @@ class Application:
 
             self.screen.blit(self.helpScreen, (SCR_W * 0.6, 8))
 
+            # show debug tile
+            if self.debugTilePos:
+                rx, ry = self.cam.gridToScreen(*self.debugTilePos)
+                pygame.draw.rect(self.screen, (255, 255, 0), (rx, ry, TILE_W, TILE_H), width=1)
+
         # show edit cursor
         if self.edit_mode:
             cursor = self.edit_tile
@@ -373,9 +380,6 @@ class Application:
                     self.scroll_xdir = 1
 
             elif e.type == pygame.MOUSEBUTTONUP:
-                # TODO do relevant things on mouse click
-                print(f"clicked on grid position: {self.cam.screenToGrid(*self.mouse_pos)}")
-
                 if e.button == 1:       # LEFT mousebutton
                     if self.edit_mode:
                         if self.edit_draw:
@@ -428,8 +432,12 @@ class Application:
         self.cloud.update(dt, self.frame_cnt)
 
         if self.cloud.isBlowing():
-            cx, cy = self.cam.screenToGrid(*self.mouse_pos)
-            self.fluid.setVelocity(cx + 1, cy + 1, (-4, 0))
+            cx, cy = self.cam.screenToGrid(self.mouse_pos[0] + TILE_W * 0.5, self.mouse_pos[1] + TILE_H * 0.5)
+            self.fluid.setVelocity(cx, cy, (-4, 0))
+
+            self.debugTilePos = (cx, cy)
+        else:
+            self.debugTilePos = None
 
         if self.edit_mode:
             self.updateEdit()
