@@ -4,11 +4,12 @@
 ###   THE TYRANT   ###
 ###                ###
 ######################
+import numpy as np
 import pygame
 import os
 
 import cam
-from Feather import Feather
+from Feather import Feather, FEATHER_SPRITE_SIZE
 from Cloud import Cloud
 from bitmapfont import BitmapFont
 import time
@@ -159,8 +160,9 @@ class Application:
         if feather_spawn is None:
             print(f"Feather Spawn not defined in level {level_name}")
         else:
-            self.feather = Feather(FEATHERS, self.cam)
-            self.feather.pos = self.cam.gridToScreen(*feather_spawn)
+            self.feather = Feather(FEATHERS, self.cam, self.level)
+            gridCenterOffset = np.array([TILE_W/2, TILE_H/2])
+            self.feather.pos = self.cam.gridToScreen(*feather_spawn) + gridCenterOffset
 
         self.cloud = Cloud(CLOUDS)
 
@@ -267,7 +269,8 @@ class Application:
 
         # render feather
         feather = self.feather.getRender()
-        self.screen.blit(feather, [self.feather.pos[0] - self.cam.pos_x, self.feather.pos[1] - self.cam.pos_y])
+        feather_render_pos = self.feather.getRenderPos()
+        self.screen.blit(feather, feather_render_pos)
 
         # show wind
         if SHOW_STREAMLINES:

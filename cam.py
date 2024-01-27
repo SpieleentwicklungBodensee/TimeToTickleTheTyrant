@@ -19,6 +19,9 @@ class Cam:
     def screenToGrid(self,x, y):
         return int((x + self.pos_x) // TILE_W), int((y + self.pos_y) // TILE_H)
 
+    def worldToGrid(self,x, y):
+        return int(x // TILE_W), int(y // TILE_H)
+
     def scroll(self, bounds, scroll_directions):
         self.pos_x += scroll_directions[0] * SCROLL_SPEED
         self.pos_y += scroll_directions[1] * SCROLL_SPEED
