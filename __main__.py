@@ -70,6 +70,8 @@ class Application:
         self.edit_draw = False
         self.edit_delete = False
 
+        self.helpScreen = pygame.Surface((SCR_W / 3, SCR_H / 4), pygame.SRCALPHA)
+
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
         TILES[' '] = pygame.image.load('gfx/tile_air.png')
@@ -260,17 +262,22 @@ class Application:
 
         # show help
         if SHOW_DEBUG_INFO:
-            pygame.draw.rect(self.screen, (40, 60, 80, 64), (SCR_W / 4, TILE_H, SCR_W / 2, TILE_H * 2.75))
+            #pygame.draw.rect(self.helpScreen, (40, 60, 80, 64), (SCR_W / 4, TILE_H, SCR_W / 2, TILE_H * 2.75))
+            self.helpScreen.fill((00, 0, 0, 64))
 
-            self.font.drawText(self.screen, 'LEV %02i' % self.level_i, x=1, y=1)
-            self.font.drawText(self.screen, '%02ix%02i' % (self.lev_w, self.lev_h), x=1, y=2)
-            self.font.centerText(self.screen, 'WASD = SCROLL AROUND', y=5)
-            self.font.centerText(self.screen, 'F1/F2 = PREV/NEXT LEVEL', y=7)
-            self.font.centerText(self.screen, 'F10 = TOGGLE EDIT MODE', y=9)
-            self.font.centerText(self.screen, 'F12 = SHOW/HIDE THIS HELP', y=11)
+            self.font.drawText(self.helpScreen, 'LEVEL %02i (%02ix%02i)' % (self.level_i, self.lev_w, self.lev_h), x=1, y=1)
+            self.font.drawText(self.helpScreen, '')
+            self.font.drawText(self.helpScreen, 'WASD = SCROLL AROUND')
+            self.font.drawText(self.helpScreen, 'F1/F2 = PREV/NEXT LEVEL')
+            self.font.drawText(self.helpScreen, 'F10 = TOGGLE EDIT MODE')
+            self.font.drawText(self.helpScreen, 'F12 = SHOW/HIDE THIS HELP')
+            self.font.drawText(self.helpScreen, '')
 
             if self.edit_mode:
-                self.font.centerText(self.screen, 'F9 = SAVE (OVERWRITE)', y=13)
+                self.font.drawText(self.helpScreen, '--- EDIT MODE -----------')
+                self.font.drawText(self.helpScreen, 'F9 = SAVE (OVERWRITE)')
+
+            self.screen.blit(self.helpScreen, (SCR_W * 0.6, 8))
 
         # show edit cursor
         if self.edit_mode:
