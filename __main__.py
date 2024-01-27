@@ -169,7 +169,7 @@ class Application:
                 x = i + 0.5
                 y = j + 0.5
 
-                points = [(x * TILE_W, y * TILE_H)]
+                points = [(x, y)]
 
                 for n in range(numSegs):
                     v_x, v_y = self.fluid.sampleVelocity(x + 1, y + 1)
@@ -186,9 +186,10 @@ class Application:
                     if x >= self.lev_w or y >= self.lev_h:
                         break
 
-                    points.append((x * TILE_W, y * TILE_H))
+                    points.append((x, y))
 
                 if len(points) > 1:
+                    points = [self.gridToScreen(*p) for p in points]
                     pygame.draw.lines(self.streamLines, pygame.Color(255, 255, 255), False, points)
 
         self.screen.blit(self.streamLines, (0, 0))
