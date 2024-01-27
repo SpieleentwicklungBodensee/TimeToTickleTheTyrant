@@ -62,14 +62,12 @@ class Feather:
         else:
             self.pos = potential_pos
 
-    def getRender(self):
+    def render(self, screen):
         feather = self.feather_sprites[self.anim_cnt]
         feather = pygame.transform.rotate(feather, self.anim_rot)
-        return feather
+        renderpos = (self.pos[0] - self.cam.pos_x - feather.get_width() / 2, self.pos[1] - self.cam.pos_y - feather.get_height() / 2)
 
-    def getRenderPos(self):
-        return [self.pos[0] - self.cam.pos_x - FEATHER_SPRITE_SIZE / 2,
-                self.pos[1] - self.cam.pos_y - FEATHER_SPRITE_SIZE / 2]
+        screen.blit(feather, renderpos)
 
     def isInWall(self, potential_pos):
         x,y = self.cam.worldToGrid(potential_pos[0], potential_pos[1])

@@ -265,9 +265,7 @@ class Application:
                     self.drawTile(tile, x, y)
 
         # render feather
-        feather = self.feather.getRender()
-        feather_render_pos = self.feather.getRenderPos()
-        self.screen.blit(feather, feather_render_pos)
+        self.feather.render(self.screen)
 
         # show wind
         if SHOW_STREAMLINES:
