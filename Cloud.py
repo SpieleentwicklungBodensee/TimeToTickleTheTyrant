@@ -68,10 +68,14 @@ class Cloud:
         self.v += drag_v
 
     def updateRotation(self, feather):
-        angle = math.atan((self.pos[1] - feather.pos[1]) / (self.pos[0] - feather.pos[0]))
-        self.anim_rot = -math.degrees(angle)
+        xdiff = self.pos[0] - feather.pos[0]
+        ydiff = self.pos[1] - feather.pos[1]
 
-        if self.pos[0] < feather.pos[0]:
+        if xdiff != 0:
+            angle = math.atan(ydiff / xdiff)
+            self.anim_rot = -math.degrees(angle)
+
+        if xdiff < 0:
             self.setLookDirection(1)
         else:
             self.setLookDirection(-1)
