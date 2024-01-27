@@ -136,6 +136,7 @@ class Application:
 
     def showStreamLines(self):
         self.fluid.velocity[3, 3] = (10, 4)
+
         numSegs = 15
 
         minSpeed = 0.1
