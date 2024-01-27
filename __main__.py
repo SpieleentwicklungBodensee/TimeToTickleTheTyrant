@@ -306,6 +306,13 @@ class Application:
                 rx, ry = self.cam.gridToScreen(*self.debugTilePos)
                 pygame.draw.rect(self.screen, (255, 255, 0), (rx, ry, TILE_W, TILE_H), width=1)
 
+            # show point positions
+            px, py = self.cam.worldToScreen(*self.cloud.pos)
+            self.screen.set_at((px, py), (255, 255, 0))
+
+            px, py = self.cam.worldToScreen(*self.feather.pos)
+            self.screen.set_at((px, py), (255, 128, 0))
+
         # show edit cursor
         if self.edit_mode:
             cursor = self.edit_tile

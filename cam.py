@@ -22,6 +22,9 @@ class Cam:
     def worldToGrid(self,x, y):
         return int(x // TILE_W), int(y // TILE_H)
 
+    def worldToScreen(self, x, y):
+        return int(x - self.pos_x), int(y - self.pos_y)
+
     def scroll(self, bounds, scroll_directions):
         self.pos_x += scroll_directions[0] * SCROLL_SPEED
         self.pos_y += scroll_directions[1] * SCROLL_SPEED
