@@ -11,7 +11,6 @@ class Fluid:
         self.velocity = np.zeros(shape=(width, height, 2))
         self.space = np.ones(shape=(width, height), dtype=np.int8)
         self.remainingTime = 0.0
-        self.velocity[3, 3] = (1, 1)
 
     def solveIncompressibility(self):
         for y in range(1, self.height - 1):
@@ -29,7 +28,7 @@ class Fluid:
                    + self.velocity[x, y + 1, 1] - self.velocity[x, y, 1]) / -s
 
                 overRelaxation = 1.9
-                p *= overRelaxation
+                #p *= overRelaxation
 
                 self.velocity[x, y] -= np.array(self.space[x - 1, y], self.space[x, y - 1]) * p
                 self.velocity[x + 1, y, 0] += self.space[x + 1, y] * p
@@ -44,14 +43,26 @@ class Fluid:
             self.velocity[0, y, 1] = self.velocity[1, y, 1]
             self.velocity[-1, y, 1] = self.velocity[-2, y, 1]
 
+    def avgVelocity(self, x, y):
+        return (self.velocity[x - 1, y - 1] + self.velocity[x, y - 1]
+              + self.velocity[x - 1, y] + self.velocity[x, y]) / 4
+
     def advectVelocity(self, dt):
+        newVelocity = self.velocity.copy()
+
         for y in range(1, self.height):
             for x in range(1, self.width):
                 if self.space[x, y] and self.space[x - 1, y] and y < self.height - 1:
-                    pass
+                    nx = x - dt * self.velocity[x, y, 0]
+                    ny = y - dt * self.avgVelocity(x, y)[1]
+                    newVelocity[x, y, 0] = self.sampleField(nx, ny, VELOCITY_X)
 
                 if self.space[x, y] and self.space[x, y - 1] and x < self.width - 1:
-                    pass
+                    nx = x - dt * self.avgVelocity(x, y)[0]
+                    ny = y - dt * self.velocity[x, y, 1]
+                    newVelocity[x, y, 1] = self.sampleField(nx, ny, VELOCITY_Y)
+
+        self.velocity = newVelocity
 
     def simulate(self, dt):
         stepsPerSecond = 100
@@ -97,7 +108,22 @@ class Fluid:
                     sx*ty * self.velocity[x0, y1, 1])
 
     def sampleVelocity(self, x, y):
-        return (
-            self.sampleField(x, y, VELOCITY_X),
-            self.sampleField(x, y, VELOCITY_Y)
-        )
+        x -= 0.5
+        y -= 0.5
+
+        x = max(0, min(x, self.width - 0.001))
+        y = max(0, min(y, self.height - 0.001))
+
+        x0 = math.floor(x)
+        y0 = math.floor(y)
+        x1 = x0 + 1
+        y1 = y0 + 1
+        tx = x - x0
+        ty = y - y0
+        sx = 1.0 - tx
+        sy = 1.0 - ty
+
+        return tuple(sx*sy * self.velocity[x0, y0]
+            + tx*sy * self.velocity[x1, y0]
+            + tx*ty * self.velocity[x1, y1]
+            + sx*ty * self.velocity[x0, y1])

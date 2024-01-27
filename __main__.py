@@ -4,9 +4,11 @@
 ###   THE TYRANT   ###
 ###                ###
 ######################
-
+import numpy as np
 import pygame
 import os
+
+from Feather import Feather
 from bitmapfont import BitmapFont
 import time
 import random
@@ -30,6 +32,7 @@ SCROLL_SPEED = 4
 
 SHOW_DEBUG_INFO = True
 
+
 class Application:
     def __init__(self):
         pygame.init()
@@ -50,6 +53,7 @@ class Application:
 
         self.screen = pygame.display.set_mode((SCR_W, SCR_H), flags=flags,vsync=1)
 
+        self.feather = Feather()
         self.loadGraphics()
         self.loadLevel(self.level_i)
 
@@ -77,6 +81,7 @@ class Application:
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
         TILES[' '] = pygame.image.load('gfx/tile_air.png')
+        TILES['*'] = pygame.image.load('gfx/tile_air.png') # feather spawn point, render as empty tile
         TILES['/'] = pygame.image.load('gfx/tile_air__rain.png')
         TILES['F'] = (pygame.image.load('gfx/tile_feet.png'), pygame.image.load('gfx/tile_feet2.png'))
         TILES['l'] = pygame.image.load('gfx/tile_lantern.png')
@@ -129,9 +134,19 @@ class Application:
 
         self.fluid = Fluid(self.lev_w + 2, self.lev_h + 2)
 
+        feather_spawn = None
         for y in range(self.lev_h):
             for x in range(self.lev_w):
                 self.fluid.space[x + 1, y + 1] = 0 if self.level[y][x] == '#' else 1
+                if self.level[y][x] == "*":  # look for feather spawn
+                    feather_spawn = (x, y)
+
+        if feather_spawn is None:
+            print(f"Feather Spawn not defined in level {level_name}")
+        else:
+            self.feather = Feather()
+            self.feather.pos = self.gridToScreen(*feather_spawn)
+
 
     def saveLevel(self, level_name):
         print('saving level: ' + str(level_name))
@@ -141,29 +156,31 @@ class Application:
                 f.write(line + '\n')
 
     def showStreamLines(self):
+        self.fluid.velocity[3, 3] = (10, 4)
+
         numSegs = 15
 
         minSpeed = 0.1
 
         self.streamLines.fill((0,0,0,0))
 
-        for i in range(1, self.lev_w):
-            for j in range(1, self.lev_h):
+        for i in range(0, self.lev_w - 1):
+            for j in range(0, self.lev_h - 1):
                 x = i + 0.5
                 y = j + 0.5
 
                 points = [(x * TILE_W, y * TILE_H)]
 
                 for n in range(numSegs):
-                    v_x, v_y = self.fluid.sampleVelocity(x, y)
+                    v_x, v_y = self.fluid.sampleVelocity(x + 1, y + 1)
                     v = math.sqrt(v_x**2 + v_y**2)
 
                     if v < minSpeed:
                         break
 
-                    #segLen = 0.2
-                    #x += v_x / v * segLen
-                    #y += v_y / v * segLen
+                    segLen = 0.2
+                    x += v_x / v * segLen
+                    y += v_y / v * segLen
                     x += v_x * 0.01
                     y += v_y * 0.01
                     if x >= self.lev_w or y >= self.lev_h:
@@ -207,7 +224,8 @@ class Application:
         if self.cam_y > self.lev_h * TILE_H - SCR_H:
             self.cam_y = self.lev_h * TILE_H - SCR_H
 
-    def updateFeather(self):
+    def updateFeather(self, dt):
+        self.feather.update(dt)
         if self.frame_cnt % self.feather_anim_speed == 0:
             self.feather_anim_cnt += self.feather_anim_dir
 
@@ -248,6 +266,7 @@ class Application:
         feather = FEATHERS[self.feather_anim_cnt]
         feather = pygame.transform.rotate(feather, self.feather_anim_rot)
         self.screen.blit(feather, (128 - (feather.get_width() - TILE_W) / 2, 64 - (feather.get_height() - TILE_H) / 2))
+        self.screen.blit(FEATHERS[0], [self.feather.pos[0] - self.cam_x, self.feather.pos[1] - self.cam_y])
 
         if SHOW_DEBUG_INFO:
             self.font.drawText(self.screen, 'LEV %02i' % self.level_i, x=1, y=1)
@@ -371,9 +390,9 @@ class Application:
                 self.running = False
 
     def update(self, dt):
-        # self.fluid.simulate(dt)
+        self.fluid.simulate(dt)
         self.updateCamera()
-        self.updateFeather()
+        self.updateFeather(dt)
 
         if self.edit_mode:
             self.updateEdit()
