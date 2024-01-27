@@ -93,11 +93,11 @@ class Application:
         self.cam_x = 0
         self.cam_y = 0
 
-        self.fluid = Fluid(self.lev_w, self.lev_h)
+        self.fluid = Fluid(self.lev_w + 2, self.lev_h + 2)
 
         for y in range(self.lev_h):
             for x in range(self.lev_w):
-                self.fluid.space[x, y] = 0.0 if self.level[y][x] == '#' else 1.0
+                self.fluid.space[x + 1, y + 1] = 0 if self.level[y][x] == '#' else 1
 
     def showStreamLines(self):
         numSegs = 15

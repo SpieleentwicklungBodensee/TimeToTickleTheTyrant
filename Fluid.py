@@ -60,7 +60,7 @@ class Fluid:
         for i in range(steps):
             self.solveIncompressibility()
         self.extrapolate()
-        self.advectVelocity()
+        self.advectVelocity(dt)
 
     def sampleField(self, x, y, field):
         x = max(1.0, min(x, self.width))
