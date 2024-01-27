@@ -79,13 +79,13 @@ class BitmapFont(object):
                 cacheSurface = self.textCache[key]
 
             blitx = x * self.font_w
-            blity = y * self.font_h + (self.font_h - self.font_h + 1) / 2
+            blity = y * self.line_h + 1/2
             output.blit(cacheSurface, (blitx, blity))
         else:
             for i, c in enumerate(text):
                 grabx = (ord(c) - 32) * self.font_w
                 blitx = (x + i) * self.font_w
-                blity = y * self.line_h + (self.line_h)
+                blity = y * self.line_h + 1/2
 
                 output.blit(self.fonts[fgcolor], (blitx, blity), (grabx, 0, self.font_w, self.font_h))
 

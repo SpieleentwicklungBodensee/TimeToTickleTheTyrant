@@ -74,7 +74,7 @@ class Application:
         self.edit_draw = False
         self.edit_delete = False
 
-        self.helpScreen = pygame.Surface((SCR_W / 3, 12 * 8), pygame.SRCALPHA)
+        self.helpScreen = pygame.Surface((SCR_W / 3, 12 * self.font.line_h), pygame.SRCALPHA)
 
         self.debugTilePos = None
 
