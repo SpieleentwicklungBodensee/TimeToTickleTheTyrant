@@ -3,13 +3,15 @@ import random
 import pygame
 
 
-GRAVITY = np.array([0., 1.])
+GRAVITY = np.array([0., 16.])
 DRAG = .0005
+FEATHER_SPRITE_SIZE = 32
 
 
 class Feather:
-    def __init__(self, feather_sprites, cam):
+    def __init__(self, feather_sprites, cam, level):
         self.cam = cam
+        self.level = level
         self.feather_sprites = feather_sprites
         self.v = np.array([0., 0.])
         self.pos = np.array([0., 0.])
@@ -37,7 +39,7 @@ class Feather:
             self.anim_rot_dir *= -1
 
     def update_phys(self, dt, fluid):
-        self.pos += self.v * dt
+        self.updatePosition(dt)
         self.v += (dt * GRAVITY)
 
         # x, y = self.cam.screenToGrid(self.pos[0], self.pos[1])
@@ -53,7 +55,26 @@ class Feather:
         drag_v = drag_v_norm * drag_scalar
         self.v += drag_v
 
+    def updatePosition(self, dt):
+        potential_pos = self.pos + self.v * dt
+        if self.isInWall(potential_pos):
+            # pot_x,pot_y = self.cam.worldToGrid(potential_pos[0], potential_pos[1])
+            # x,y = self.cam.worldToGrid(self.pos[0], self.pos[1])
+            # print(f"Xdiff: {x - pot_x}   -   Ydiff: {y-pot_y}")
+            pass
+        else:
+            self.pos = potential_pos
+
     def getRender(self):
         feather = self.feather_sprites[self.anim_cnt]
         feather = pygame.transform.rotate(feather, self.anim_rot)
         return feather
+
+    def getRenderPos(self):
+        return [self.pos[0] - self.cam.pos_x - FEATHER_SPRITE_SIZE / 2,
+                self.pos[1] - self.cam.pos_y - FEATHER_SPRITE_SIZE / 2]
+
+    def isInWall(self, potential_pos):
+        x,y = self.cam.worldToGrid(potential_pos[0], potential_pos[1])
+        tile = self.level[y][x]
+        return tile == "#"
