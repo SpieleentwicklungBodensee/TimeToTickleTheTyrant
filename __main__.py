@@ -206,24 +206,16 @@ class Application:
                 x = i + 0.5
                 y = j + 0.5
 
-                points = [(x, y)]
+                points = []
+                for (x_, y_) in self.fluid.getStreamLine(x + 1, y + 1, 15, 0.1):
+                    x_ = x_ - 1
+                    y_ = y_ - 1
 
-                for n in range(numSegs):
-                    v_x, v_y = self.fluid.sampleVelocity(x + 1, y + 1)
-                    v = math.sqrt(v_x**2 + v_y**2)
+                    if x_ >= self.lev_w or y_ >= self.lev_h:
+                        continue
 
-                    if v < minSpeed:
-                        break
-
-                    segLen = 0.2
-                    x += v_x / v * segLen
-                    y += v_y / v * segLen
-                    x += v_x * 0.01
-                    y += v_y * 0.01
-                    if x >= self.lev_w or y >= self.lev_h:
-                        break
-
-                    points.append((x, y))
+                    # todo filter points in wall
+                    points.append((x_, y_))
 
                 if len(points) > 1:
                     points = [self.cam.gridToScreen(*p) for p in points]

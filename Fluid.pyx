@@ -2,7 +2,7 @@
 
 import numpy as np
 
-from libc.math cimport floor
+from libc.math cimport floor, sqrt
 
 cimport cython
 from libc.stdint cimport int8_t, uint32_t
@@ -186,3 +186,25 @@ cdef class Fluid:
             + sx*ty * self.velocity[x0, y1, 1]);
 
         return (u, v)
+
+    def getStreamLine(self, float x, float y, int maxSegments, float minSpeed):
+        cdef float segLen = 0.2
+        points = [(x, y)]
+
+        for n in range(maxSegments):
+            v_x, v_y = self.sampleVelocity(x, y)
+            v = sqrt(v_x**2 + v_y**2)
+
+            if v < minSpeed:
+                break
+
+            x += v_x / v * segLen
+            y += v_y / v * segLen
+            #x += v_x * 0.01
+            #y += v_y * 0.01
+            if x >= self.width or y >= self.height:
+                break
+
+            points.append((x, y))
+
+        return points
