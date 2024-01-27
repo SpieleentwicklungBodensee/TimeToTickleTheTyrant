@@ -271,7 +271,7 @@ class Application:
                 self.running = False
 
     def update(self, dt):
-        self.fluid.simulate(dt)
+        # self.fluid.simulate(dt)
         self.updateCamera()
         self.updateFeather()
 
