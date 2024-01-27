@@ -4,9 +4,11 @@
 ###   THE TYRANT   ###
 ###                ###
 ######################
-
+import numpy as np
 import pygame
 import os
+
+from Feather import Feather
 from bitmapfont import BitmapFont
 import time
 import random
@@ -27,8 +29,10 @@ FEATHERS = []
 TILE_W = 32
 TILE_H = 32
 SCROLL_SPEED = 4
+FEATHER_SPAWN = np.array([55.,77.]) #TODO tile in level?
 
 SHOW_DEBUG_INFO = True
+
 
 class Application:
     def __init__(self):
@@ -50,6 +54,7 @@ class Application:
 
         self.screen = pygame.display.set_mode((SCR_W, SCR_H), flags=flags,vsync=1)
 
+        self.feather = Feather()
         self.loadGraphics()
         self.loadLevel(self.level_i)
 
@@ -120,6 +125,8 @@ class Application:
         self.lev_h = len(self.level)
         self.cam_x = 0
         self.cam_y = 0
+        self.feather = Feather()
+        self.feather.pos = np.copy(FEATHER_SPAWN)
 
         self.fluid = Fluid(self.lev_w + 2, self.lev_h + 2)
 
@@ -189,7 +196,8 @@ class Application:
         if self.cam_y > self.lev_h * TILE_H - SCR_H:
             self.cam_y = self.lev_h * TILE_H - SCR_H
 
-    def updateFeather(self):
+    def updateFeather(self, dt):
+        self.feather.update(dt)
         if self.frame_cnt % self.feather_anim_speed == 0:
             self.feather_anim_cnt += self.feather_anim_dir
 
@@ -219,6 +227,7 @@ class Application:
         feather = FEATHERS[self.feather_anim_cnt]
         feather = pygame.transform.rotate(feather, self.feather_anim_rot)
         self.screen.blit(feather, (128 - (feather.get_width() - TILE_W) / 2, 64 - (feather.get_height() - TILE_H) / 2))
+        self.screen.blit(FEATHERS[0], [self.feather.pos[0] - self.cam_x, self.feather.pos[1] - self.cam_y])
 
         if SHOW_DEBUG_INFO:
             self.font.drawText(self.screen, 'LEV %02i' % self.level_i, x=1, y=1)
@@ -294,7 +303,7 @@ class Application:
     def update(self, dt):
         # self.fluid.simulate(dt)
         self.updateCamera()
-        self.updateFeather()
+        self.updateFeather(dt)
 
     def run(self):
         self.running = True
