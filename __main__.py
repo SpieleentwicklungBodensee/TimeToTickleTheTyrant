@@ -29,6 +29,7 @@ CLOUDS = []
 
 
 SHOW_DEBUG_INFO = True
+SHOW_STREAMLINES = True
 
 
 class Application:
@@ -72,7 +73,7 @@ class Application:
         self.edit_draw = False
         self.edit_delete = False
 
-        self.helpScreen = pygame.Surface((SCR_W / 3, SCR_H / 4), pygame.SRCALPHA)
+        self.helpScreen = pygame.Surface((SCR_W / 3, 12 * 8), pygame.SRCALPHA)
 
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
@@ -269,10 +270,11 @@ class Application:
         self.screen.blit(feather, [self.feather.pos[0] - self.cam.pos_x, self.feather.pos[1] - self.cam.pos_y])
 
         # show wind
-        self.fluid.velocity[3, 3] = (10, 4)
-        self.fluid.smoke[3, 3] = 1.0
-        self.showStreamLines()
-        #self.showSmoke()
+        if SHOW_STREAMLINES:
+            self.fluid.velocity[3, 3] = (10, 4)
+            self.fluid.smoke[3, 3] = 1.0
+            self.showStreamLines()
+            #self.showSmoke()
 
         # render cloud (player)
         cloud = self.cloud.getRender()
@@ -288,6 +290,7 @@ class Application:
             self.font.drawText(self.helpScreen, '')
             self.font.drawText(self.helpScreen, 'WASD = SCROLL AROUND')
             self.font.drawText(self.helpScreen, 'F1/F2 = PREV/NEXT LEVEL')
+            self.font.drawText(self.helpScreen, 'F8 = SHOW/HIDE WIND LINES')
             self.font.drawText(self.helpScreen, 'F10 = TOGGLE EDIT MODE')
             self.font.drawText(self.helpScreen, 'F12 = SHOW/HIDE THIS HELP')
             self.font.drawText(self.helpScreen, '')
@@ -351,6 +354,10 @@ class Application:
                         self.screen.fill((255, 255, 255))
                         pygame.display.flip()
                         time.sleep(0.2)
+
+                elif e.key == pygame.K_F8:
+                    global SHOW_STREAMLINES
+                    SHOW_STREAMLINES = not SHOW_STREAMLINES
 
                 elif e.key == pygame.K_RETURN:
                     if modstate & pygame.KMOD_ALT:
