@@ -34,7 +34,7 @@ cdef class Fluid:
         self.velocity[x, y, 1] = v[1]
 
     def solveIncompressibility(self):
-        cdef int x, y
+        cdef int x, y, s
 
         for y in range(1, self.height - 1):
             for x in range(1, self.width - 1):
