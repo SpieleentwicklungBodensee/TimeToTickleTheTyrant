@@ -151,7 +151,7 @@ class Application:
         # render feather
         feather = FEATHERS[self.feather_anim_cnt]
         feather = pygame.transform.rotate(feather, self.feather_anim_rot)
-        self.screen.blit(feather, (128, 64))
+        self.screen.blit(feather, (128 - (feather.get_width() - TILE_W) / 2, 64 - (feather.get_height() - TILE_H) / 2))
 
         self.font.drawText(self.screen, 'LEV %02i' % self.level_i, x=1, y=1)
         self.font.drawText(self.screen, '%02ix%02i' % (self.lev_w, self.lev_h), x=1, y=2)
