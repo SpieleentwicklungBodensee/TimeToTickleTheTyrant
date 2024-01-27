@@ -300,8 +300,8 @@ class Application:
 
         # show help
         if SHOW_DEBUG_INFO:
-            if self.frame_cnt % 32 < 16:
-                self.bigfont.drawText(self.screen, 'DEBUG VIEW', x=1, y=2)
+            #if self.frame_cnt % 32 < 16:
+            #    self.bigfont.drawText(self.screen, 'DEBUG VIEW', x=1, y=2)
 
             # show help screen
             self.helpScreen.fill((00, 0, 0, 64))
