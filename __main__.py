@@ -230,10 +230,14 @@ class Application:
             mx, my = self.screenToGrid(*self.mouse_pos)
             self.setTile(self.edit_tile, mx, my)
 
+            self.updateLevelWind()
+
         if self.edit_delete:
             # delete / set empty tile in grid
             mx, my = self.screenToGrid(*self.mouse_pos)
             self.setTile(' ', mx, my)
+
+            self.updateLevelWind()
 
     def render(self):
         self.screen.fill((40, 60, 80))
