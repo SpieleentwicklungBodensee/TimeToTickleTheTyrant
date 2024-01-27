@@ -96,7 +96,22 @@ class Fluid:
                     sx*ty * self.velocity[x0, y1, 1])
 
     def sampleVelocity(self, x, y):
-        return (
-            self.sampleField(x, y, VELOCITY_X),
-            self.sampleField(x, y, VELOCITY_Y)
-        )
+        x -= 0.5
+        y -= 0.5
+
+        x = max(0, min(x, self.width - 0.001))
+        y = max(0, min(y, self.height - 0.001))
+
+        x0 = math.floor(x)
+        y0 = math.floor(y)
+        x1 = x0 + 1
+        y1 = y0 + 1
+        tx = x - x0
+        ty = y - y0
+        sx = 1.0 - tx
+        sy = 1.0 - ty
+
+        return tuple(sx*sy * self.velocity[x0, y0]
+            + tx*sy * self.velocity[x1, y0]
+            + tx*ty * self.velocity[x1, y1]
+            + sx*ty * self.velocity[x0, y1])
