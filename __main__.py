@@ -128,21 +128,22 @@ class Application:
                 self.fluid.space[x + 1, y + 1] = 0 if self.level[y][x] == '#' else 1
 
     def showStreamLines(self):
+        self.fluid.velocity[3, 3] = (10, 4)
         numSegs = 15
 
         minSpeed = 0.1
 
         self.streamLines.fill((0,0,0,0))
 
-        for i in range(1, self.lev_w):
-            for j in range(1, self.lev_h):
+        for i in range(0, self.lev_w - 1):
+            for j in range(0, self.lev_h - 1):
                 x = i + 0.5
                 y = j + 0.5
 
                 points = [(x * TILE_W, y * TILE_H)]
 
                 for n in range(numSegs):
-                    v_x, v_y = self.fluid.sampleVelocity(x, y)
+                    v_x, v_y = self.fluid.sampleVelocity(x + 1, y + 1)
                     v = math.sqrt(v_x**2 + v_y**2)
 
                     if v < minSpeed:
@@ -292,7 +293,7 @@ class Application:
                 self.running = False
 
     def update(self, dt):
-        # self.fluid.simulate(dt)
+        self.fluid.simulate(dt)
         self.updateCamera()
         self.updateFeather()
 
