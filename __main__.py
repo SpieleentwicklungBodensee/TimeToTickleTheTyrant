@@ -127,6 +127,7 @@ class Application:
         self.cam_y = 0
 
         self.fluid = Fluid(self.lev_w + 2, self.lev_h + 2)
+        self.smoke = pygame.Surface((TILE_W * self.lev_w, TILE_H * self.lev_h), pygame.SRCALPHA)
         self.updateLevelWind()
 
         feather_spawn = None
@@ -159,9 +160,19 @@ class Application:
 
         self.edit_mode = False
 
-    def showStreamLines(self):
-        self.fluid.velocity[3, 3] = (10, 4)
+    def showSmoke(self):
+        smoke = np.repeat(np.repeat(
+            (self.fluid.smoke * 255).astype(np.uint8)[1:-1, 1:-1],
+            TILE_W, axis=0), TILE_H, axis=1
+        )
 
+        surface_alpha = np.array(self.smoke.get_view('A'), copy=False)
+        surface_alpha[:,:] = smoke
+        surface_alpha = None
+
+        self.screen.blit(self.smoke, (0, 0))
+
+    def showStreamLines(self):
         numSegs = 15
 
         minSpeed = 0.1
@@ -260,7 +271,10 @@ class Application:
         self.screen.blit(feather, [self.feather.pos[0] - self.cam_x, self.feather.pos[1] - self.cam_y])
 
         # show wind
+        self.fluid.velocity[3, 3] = (10, 4)
+        self.fluid.smoke[3, 3] = 1.0
         self.showStreamLines()
+        #self.showSmoke()
 
         # show help
         if SHOW_DEBUG_INFO:
