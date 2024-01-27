@@ -138,8 +138,15 @@ cdef class Fluid:
 
         for y in range(self.height):
             for x in range(self.width):
-                if self.space[x, y] == 0 and (self.velocity[x, y, 0] != 0.0 or self.velocity[x, y, 1] != 0.0):
-                    print('error', x, y, self.velocity[x, y, 0], self.velocity[x, y, 1])
+                if self.space[x, y] == 0:
+                    if self.velocity[x, y, 0] != 0.0:
+                        self.velocity[x, y, 0] = 0.0
+                    if self.velocity[x, y, 1] != 0.0:
+                        self.velocity[x, y, 1] = 0.0
+                    if self.velocity[x + 1, y, 0] != 0.0:
+                        self.velocity[x + 1, y, 0] = 0.0
+                    if self.velocity[x, y + 1, 1] != 0.0:
+                        self.velocity[x, y + 1, 1] = 0.0
 
         for i in range(steps):
             self.solveIncompressibility()
