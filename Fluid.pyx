@@ -3,11 +3,21 @@
 import numpy as np
 import math
 
+cimport cython
+from libc.stdint cimport int8_t
+
 VELOCITY_X = 0
 VELOCITY_Y = 1
 SMOKE = 2
 
-class Fluid:
+cdef class Fluid:
+    cdef int width
+    cdef int height
+    cdef double[:, :, :] velocity
+    cdef int8_t[:, :] space
+    cdef double[:, :] smoke
+    cdef double remainingTime
+
     def __init__(self, width, height):
         self.width = width
         self.height = height
@@ -16,7 +26,16 @@ class Fluid:
         self.smoke = np.zeros(shape=(width, height))
         self.remainingTime = 0.0
 
+    def setSpace(self, x, y, s):
+        self.space[x, y] = s
+
+    def setVelocity(self, x, y, v):
+        self.velocity[x, y, 0] = v[0]
+        self.velocity[x, y, 1] = v[1]
+
     def solveIncompressibility(self):
+        cdef int x, y
+
         for y in range(1, self.height - 1):
             for x in range(1, self.width - 1):
                 if self.space[x, y] == 0:
@@ -34,7 +53,8 @@ class Fluid:
                 overRelaxation = 1.9
                 #p *= overRelaxation
 
-                self.velocity[x, y] -= np.array(self.space[x - 1, y], self.space[x, y - 1]) * p
+                self.velocity[x, y, 0] -= self.space[x - 1, y] * p
+                self.velocity[x, y, 1] -= self.space[x, y - 1] * p
                 self.velocity[x + 1, y, 0] += self.space[x + 1, y] * p
                 self.velocity[x, y + 1, 1] += self.space[x, y + 1] * p
 
@@ -47,9 +67,17 @@ class Fluid:
             self.velocity[0, y, 1] = self.velocity[1, y, 1]
             self.velocity[-1, y, 1] = self.velocity[-2, y, 1]
 
-    def avgVelocity(self, x, y):
-        return (self.velocity[x - 1, y - 1] + self.velocity[x, y - 1]
-              + self.velocity[x - 1, y] + self.velocity[x, y]) / 4
+    def avgVelocity(self, _x, _y):
+        cdef int x = _x
+        cdef int y = _y
+
+        vx = (self.velocity[x - 1, y - 1, 0] + self.velocity[x, y - 1, 0]
+            + self.velocity[x - 1, y, 0] + self.velocity[x, y, 0]) / 4.0
+
+        vy = (self.velocity[x - 1, y - 1, 1] + self.velocity[x, y - 1, 1]
+            + self.velocity[x - 1, y, 1] + self.velocity[x, y, 1]) / 4.0
+
+        return vx, vy
 
     def advectVelocity(self, dt):
         newVelocity = self.velocity.copy()
@@ -93,14 +121,14 @@ class Fluid:
 
         for y in range(self.height):
             for x in range(self.width):
-                if self.space[x, y] == 0 and (self.velocity[x, y] != (0.0, 0.0)).any():
-                    print('error', x, y, self.velocity[x, y])
+                if self.space[x, y] == 0 and (self.velocity[x, y, 0] != 0.0 or self.velocity[x, y, 1] != 0.0):
+                    print('error', x, y, self.velocity[x, y, 0], self.velocity[x, y, 1])
 
         for i in range(steps):
             self.solveIncompressibility()
         self.extrapolate()
         self.advectVelocity(dt)
-        self.advectSmoke(dt)
+        #self.advectSmoke(dt)
 
     def sampleField(self, x, y, field):
         x -= 0.5

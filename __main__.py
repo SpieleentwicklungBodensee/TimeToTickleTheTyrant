@@ -160,10 +160,10 @@ class Application:
         for y in range(self.lev_h):
             for x in range(self.lev_w):
                 if self.level[y][x] == '#':
-                    self.fluid.space[x + 1, y + 1] = 0
-                    self.fluid.velocity[x + 1, y + 1] = (0.0, 0.0)
+                    self.fluid.setSpace(x + 1, y + 1, 0)
+                    self.fluid.setVelocity(x + 1, y + 1, (0.0, 0.0))
                 else:
-                    self.fluid.space[x + 1, y + 1] = 1
+                    self.fluid.setSpace(x + 1, y + 1, 1)
 
     def saveLevel(self, level_name):
         print('saving level: ' + str(level_name))
@@ -271,8 +271,8 @@ class Application:
 
         # show wind
         if SHOW_STREAMLINES:
-            self.fluid.velocity[3, 3] = (10, 4)
-            self.fluid.smoke[3, 3] = 1.0
+            self.fluid.setVelocity(3, 3, (10, 4))
+            #self.fluid.smoke[3, 3] = 1.0
             self.showStreamLines()
             #self.showSmoke()
 
