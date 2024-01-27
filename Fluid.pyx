@@ -5,6 +5,7 @@ import math
 
 VELOCITY_X = 0
 VELOCITY_Y = 1
+SMOKE = 2
 
 class Fluid:
     def __init__(self, width, height):
@@ -12,6 +13,7 @@ class Fluid:
         self.height = height
         self.velocity = np.zeros(shape=(width, height, 2))
         self.space = np.ones(shape=(width, height), dtype=np.int8)
+        self.smoke = np.zeros(shape=(width, height))
         self.remainingTime = 0.0
 
     def solveIncompressibility(self):
@@ -66,6 +68,23 @@ class Fluid:
 
         self.velocity = newVelocity
 
+    def advectSmoke(self, dt):
+        newSmoke = self.smoke.copy()
+
+        for x in range(1, self.width - 1):
+            for y in range(1, self.height - 1):
+                if self.space[x, y] == 0:
+                    continue
+
+                u = self.velocity[x, y, 0] + self.velocity[x + 1, y, 0] * 0.5
+                v = self.velocity[x, y, 1] + self.velocity[x, y + 1, 1] * 0.5
+                x_ = x + 0.5 - dt * u
+                y_ = y + 0.5 - dt * v
+
+                newSmoke[x, y] = self.sampleField(x_, y_, SMOKE)
+
+        self.smoke = newSmoke
+
     def simulate(self, dt):
         stepsPerSecond = 100
 
@@ -81,6 +100,7 @@ class Fluid:
             self.solveIncompressibility()
         self.extrapolate()
         self.advectVelocity(dt)
+        self.advectSmoke(dt)
 
     def sampleField(self, x, y, field):
         x -= 0.5
@@ -125,7 +145,14 @@ class Fluid:
         sx = 1.0 - tx
         sy = 1.0 - ty
 
-        return tuple(sx*sy * self.velocity[x0, y0]
-            + tx*sy * self.velocity[x1, y0]
-            + tx*ty * self.velocity[x1, y1]
-            + sx*ty * self.velocity[x0, y1])
+        u = (sx*sy * self.velocity[x0, y0, 0]
+            + tx*sy * self.velocity[x1, y0, 0]
+            + tx*ty * self.velocity[x1, y1, 0]
+            + sx*ty * self.velocity[x0, y1, 0]);
+
+        v = (sx*sy * self.velocity[x0, y0, 1]
+            + tx*sy * self.velocity[x1, y0, 1]
+            + tx*ty * self.velocity[x1, y1, 1]
+            + sx*ty * self.velocity[x0, y1, 1]);
+
+        return (u, v)
