@@ -22,9 +22,9 @@ cdef class Fluid:
     def __init__(self, width, height):
         self.width = width + 2
         self.height = height + 2
-        self.velocity = np.zeros(shape=(width, height, 2))
-        self.space = np.ones(shape=(width, height), dtype=np.int8)
-        self.smoke = np.zeros(shape=(width, height))
+        self.velocity = np.zeros(shape=(self.width, self.height, 2))
+        self.space = np.ones(shape=(self.width, self.height), dtype=np.int8)
+        self.smoke = np.zeros(shape=(self.width, self.height))
         self.remainingTime = 0.0
 
     def setSpace(self, int x, int y, s):
