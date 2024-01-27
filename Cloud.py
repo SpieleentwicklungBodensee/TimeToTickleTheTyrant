@@ -103,6 +103,10 @@ class Cloud:
 
         return False
 
+    def getBlowDirection(self):
+        a = math.radians(self.anim_rot)
+        return (math.cos(a), -math.sin(a))
+
     def setLookDirection(self, d):
         if d < 0:
             self.lookDirection = -1
