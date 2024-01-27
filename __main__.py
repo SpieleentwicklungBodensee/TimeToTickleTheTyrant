@@ -65,11 +65,25 @@ class Application:
         self.feather_anim_rot = 0
         self.feather_anim_rot_dir = 2
 
-        self.streamLines = pygame.Surface((SCR_W, SCR_H), pygame.SRCALPHA)
 
     def loadGraphics(self):
         TILES['#'] = pygame.image.load('gfx/tile_wall.png')
+        TILES[' '] = pygame.image.load('gfx/tile_air.png')
+        TILES['/'] = pygame.image.load('gfx/tile_air__rain.png')
         TILES['F'] = (pygame.image.load('gfx/tile_feet.png'), pygame.image.load('gfx/tile_feet2.png'))
+        TILES['l'] = pygame.image.load('gfx/tile_lantern.png')
+        TILES['L'] = pygame.image.load('gfx/tile_lanterntop.png')
+        TILES['_'] = pygame.image.load('gfx/tile_floor.png')
+        TILES['g'] = pygame.image.load('gfx/tile_grill.png')
+        TILES['T'] = pygame.image.load('gfx/tile_housetop_antenna.png')
+        TILES['c'] = pygame.image.load('gfx/tile_air__AC_l.png')
+        TILES['C'] = pygame.image.load('gfx/tile_air__AC_r.png')
+        TILES['h'] = pygame.image.load('gfx/tile_house_l.png')
+        TILES['i'] = pygame.image.load('gfx/tile_house_m.png')
+        TILES['j'] = pygame.image.load('gfx/tile_house_r.png')
+        TILES['H'] = pygame.image.load('gfx/tile_housetop_l.png')
+        # TILES['I'] = pygame.image.load('gfx/tile_housetop_m.png')
+        # TILES['J'] = pygame.image.load('gfx/tile_housetop_r.png')
 
         global FEATHERS
         FEATHERS += [pygame.image.load('gfx/feather1.png'),
