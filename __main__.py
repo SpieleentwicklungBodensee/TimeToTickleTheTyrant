@@ -267,7 +267,7 @@ class Application:
                 if len(points) > 1:
                     points = [(self.cam.gridToScreen(x_, y_), v) for (x_, y_, v) in points]
                     points = [p[0] for p in points]
-                    pygame.draw.aalines(self.streamLines, pygame.Color(255, 255, 255, 255), False, points)
+                    pygame.draw.lines(self.streamLines, pygame.Color(80, 110, 140, 255), False, points)
 
     def showStreamLines(self):
         self.updateStreamLines()
@@ -315,6 +315,12 @@ class Application:
     def render(self):
         self.screen.fill(self.backgroundColor)
 
+        # show wind
+        if SHOW_STREAMLINES:
+            #self.fluid.smoke[3, 3] = 1.0
+            self.showStreamLines()
+            #self.showSmoke()
+
         # render level
         for y in range(self.lev_h):
             for x in range(self.lev_w):
@@ -325,12 +331,6 @@ class Application:
 
         # render feather
         self.feather.render(self.screen)
-
-        # show wind
-        if SHOW_STREAMLINES:
-            #self.fluid.smoke[3, 3] = 1.0
-            self.showStreamLines()
-            #self.showSmoke()
 
         # render cloud (player)
         if not self.edit_mode:
