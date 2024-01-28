@@ -146,9 +146,9 @@ cdef class Fluid:
                         self.velocity[x, y, 0] = 0.0
                     if self.velocity[x, y, 1] != 0.0:
                         self.velocity[x, y, 1] = 0.0
-                    if self.velocity[x + 1, y, 0] != 0.0:
+                    if x + 1 < self.width and self.velocity[x + 1, y, 0] != 0.0:
                         self.velocity[x + 1, y, 0] = 0.0
-                    if self.velocity[x, y + 1, 1] != 0.0:
+                    if y + 1 < self.height and self.velocity[x, y + 1, 1] != 0.0:
                         self.velocity[x, y + 1, 1] = 0.0
 
         for i in range(steps):
