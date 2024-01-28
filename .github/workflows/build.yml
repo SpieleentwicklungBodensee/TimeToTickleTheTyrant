@@ -1,0 +1,108 @@
+name: Build
+
+on: push
+
+jobs:
+  build_linux:
+    name: Build Linux x64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install Cython pyinstaller
+
+      - name: Build
+        run: |
+          pip install -e .
+          python -OO -m PyInstaller TimeToTickleTheTyrant.spec
+
+      - uses: a7ul/tar-action@v1.1.0
+        id: compress
+        with:
+          command: c
+          cwd: dist
+          files: |
+            ./TimeToTickleTheTyrant
+          outPath: linux.tar.gz
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./*.tar.gz
+
+  build_windows:
+    name: Build Windows x64
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install Cython pyinstaller
+
+      - name: Build
+        run: |
+          pip install -e .
+          python -OO -m PyInstaller TimeToTickleTheTyrant.spec
+
+      - uses: a7ul/tar-action@v1.1.0
+        id: compress
+        with:
+          command: c
+          cwd: dist
+          files: |
+            ./TimeToTickleTheTyrant
+          outPath: windows.tar.gz
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./*.tar.gz
+
+  build_macos:
+    name: Build Mac OS x64
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install Cython pyinstaller
+
+      - name: Build
+        run: |
+          pip install -e .
+          python -OO -m PyInstaller TimeToTickleTheTyrant.spec
+
+      - uses: a7ul/tar-action@v1.1.0
+        id: compress
+        with:
+          command: c
+          cwd: dist
+          files: |
+            ./TimeToTickleTheTyrant
+          outPath: macos.tar.gz
+
+      - uses: actions/upload-artifact@v3
+        with:
+          path: ./*.tar.gz
+
+
