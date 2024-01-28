@@ -8,7 +8,8 @@ import pygame
 GRAVITY = np.array([0., 16.])
 DRAG = .0005
 COLLISION_RADIUS = 12 # not an actual radius. Half the collision square's height
-COLLISION_TILES = ["#", 'h', 'i', 'j', 'H', 'X', 'Y']
+COLLISION_TILES = ["#", 'h', 'i', 'j', 'H', 'X', 'Y', 'd', 'b', 'q', 'p', 'l',
+                   '-', '+', 'o', 'u', 'n', ]
 
 
 class Feather:
