@@ -72,12 +72,27 @@ class Feather:
         screen.blit(feather, renderpos)
 
     def detectWall(self, potential_pos):
+
+        #  1      3
+        #   o----o
+        #   |    |
+        #   |    |
+        #   o----o
+        #  2      4
+
         collision_point = np.copy(potential_pos)
-        collision_point[0] += math.copysign(COLLISION_RADIUS, self.v[0]) if self.v[0] != 0 else 0
-        collision_point[1] += math.copysign(COLLISION_RADIUS, self.v[1]) if self.v[1] != 0 else 0
-        x,y = self.cam.worldToGrid(collision_point[0], collision_point[1])
-        tile = self.level[y][x]
-        if tile in COLLISION_TILES:
-            xcoord,ycoord = self.cam.worldToGrid(self.pos[0], self.pos[1])
-            return x - xcoord, y - ycoord
+
+        collision_points = []
+        collision_points.append((collision_point[0] - COLLISION_RADIUS, collision_point[1] - COLLISION_RADIUS))
+        collision_points.append((collision_point[0] - COLLISION_RADIUS, collision_point[1] + COLLISION_RADIUS))
+        collision_points.append((collision_point[0] + COLLISION_RADIUS, collision_point[1] - COLLISION_RADIUS))
+        collision_points.append((collision_point[0] + COLLISION_RADIUS, collision_point[1] + COLLISION_RADIUS))
+
+        for collision_point in collision_points:
+            x,y = self.cam.worldToGrid(collision_point[0], collision_point[1])
+            tile = self.level[y][x]
+            if tile in COLLISION_TILES:
+                xcoord,ycoord = self.cam.worldToGrid(self.pos[0], self.pos[1])
+                return x - xcoord, y - ycoord
+
         return None
