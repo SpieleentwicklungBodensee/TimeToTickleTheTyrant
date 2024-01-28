@@ -468,6 +468,13 @@ class Application:
         self.feather.update(dt, self.frame_cnt, self.fluid)
         self.cloud.update(dt, self.frame_cnt, self.feather)
 
+        self.blowFromCloud()
+        self.checkWinCondition()
+
+        if self.edit_mode:
+            self.updateEdit()
+
+    def blowFromCloud(self):
         if self.cloud.isBlowing():
             cx, cy = self.cam.worldToGrid(self.cloud.pos[0], self.cloud.pos[1])
             blowdir = self.cloud.getBlowDirection()
@@ -477,12 +484,16 @@ class Application:
             self.debugTilePos = (bx, by)
         else:
             self.debugTilePos = None
-
         for xpos, ypos, xblow, yblow in self.windSources:
             self.fluid.setVelocity(xpos, ypos, (xblow, yblow))
 
-        if self.edit_mode:
-            self.updateEdit()
+    def checkWinCondition(self):
+        feather_tile = self.cam.worldToGrid(self.feather.pos[0],self.feather.pos[1])
+        tile_chr = self.level[feather_tile[1]][feather_tile[0]]
+        if tile_chr == "F":
+            print("CHICKEN DINNER")
+
+        pass
 
     def run(self):
         self.running = True
