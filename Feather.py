@@ -8,6 +8,7 @@ import pygame
 GRAVITY = np.array([0., 16.])
 DRAG = .0005
 COLLISION_RADIUS = 12 # not an actual radius. Half the collision square's height
+COLLISION_TILES = ["#", 'h', 'i', 'j', 'H', 'X', 'Y']
 
 
 class Feather:
@@ -76,7 +77,7 @@ class Feather:
         collision_point[1] += math.copysign(COLLISION_RADIUS, self.v[1]) if self.v[1] != 0 else 0
         x,y = self.cam.worldToGrid(collision_point[0], collision_point[1])
         tile = self.level[y][x]
-        if tile == "#":
+        if tile in COLLISION_TILES:
             xcoord,ycoord = self.cam.worldToGrid(self.pos[0], self.pos[1])
             return x - xcoord, y - ycoord
         return None
