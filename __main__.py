@@ -358,6 +358,13 @@ class Application:
                     haha = pygame.transform.smoothscale(haha, (haha.get_width() * scale, haha.get_height() * scale))
                     self.screen.blit(haha, (feet_pos[0] + offset, feet_pos[1] - offset*0.3))
 
+            if self.level_i == self.level_amount:
+                self.bigfont.centerText(self.screen, "CONGRATULATIONS", y=7)
+                self.font.centerText(self.screen, "YOU WON THE GAME", y=10)
+            else:
+                if self.wincon_cnt >= WINCON_TIMINGS[2]:
+                    self.font.centerText(self.screen, "LEVEL COMPLETE", y=15)
+
         # show help
         if SHOW_DEBUG_INFO:
             #if self.frame_cnt % 32 < 16:
