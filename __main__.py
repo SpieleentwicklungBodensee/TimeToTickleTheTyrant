@@ -333,14 +333,14 @@ class Application:
             # self.font.drawText(self.helpScreen, 'WASD = SCROLL AROUND')
             self.font.drawText(self.helpScreen, 'F1/F2 = PREV/NEXT LEVEL')
             self.font.drawText(self.helpScreen, '')
-            self.font.drawText(self.helpScreen, 'F8  =  WIND LINES')
-            self.font.drawText(self.helpScreen, 'F10 = EDIT MODE')
-            self.font.drawText(self.helpScreen, 'F12 = TOGGLE THIS HELP')
+            self.font.drawText(self.helpScreen, 'F8    = WIND LINES')
+            self.font.drawText(self.helpScreen, 'F10   = EDIT MODE')
+            self.font.drawText(self.helpScreen, 'F12   = THIS HELP')
             self.font.drawText(self.helpScreen, '')
 
             if self.edit_mode:
-                self.font.drawText(self.helpScreen, '--- EDIT MODE -----------')
-                self.font.drawText(self.helpScreen, 'F9 = SAVE (OVERWRITE)')
+                self.font.drawText(self.helpScreen, '------- EDIT MODE -------')
+                self.font.drawText(self.helpScreen, 'F9  = SAVE (OVERWRITE)')
 
             self.screen.blit(self.helpScreen, (SCR_W * 0.6, 8))
 
