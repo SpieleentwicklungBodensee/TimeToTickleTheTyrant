@@ -35,7 +35,9 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
+          name: Linux
           path: ./*.tar.gz
+
 
   build_windows:
     name: Build Windows x64
@@ -69,6 +71,7 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
+          name: Windows
           path: ./*.tar.gz
 
   build_macos:
@@ -103,6 +106,7 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
+          name: MacOs
           path: ./*.tar.gz
 
 
