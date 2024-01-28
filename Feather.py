@@ -1,4 +1,4 @@
-import math
+import cam
 
 import numpy as np
 import random
@@ -12,8 +12,8 @@ COLLISION_TILES = ["#", 'h', 'i', 'j', 'H', 'X', 'Y']
 
 
 class Feather:
-    def __init__(self, feather_sprites, cam, level):
-        self.cam = cam
+    def __init__(self, feather_sprites, _cam, level):
+        self.cam = _cam
         self.level = level
         self.feather_sprites = feather_sprites
         self.v = np.array([0., 0.])
@@ -47,7 +47,7 @@ class Feather:
         self.updatePosition(dt)
         self.v += (dt * GRAVITY)
 
-        x, y = self.cam.worldToGrid(self.pos[0], self.pos[1])
+        x, y = self.pos[0] / cam.TILE_W, self.pos[1] / cam.TILE_H
         v_wind = np.array(fluid.sampleVelocity(x, y))
         dv = self.v - v_wind * 1000.0
 
