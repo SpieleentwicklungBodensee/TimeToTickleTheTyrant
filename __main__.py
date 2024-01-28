@@ -30,7 +30,7 @@ FEATHERS = []
 CLOUDS = []
 
 
-SHOW_DEBUG_INFO = True
+SHOW_DEBUG_INFO = __debug__
 SHOW_STREAMLINES = True
 
 LEVELS_DIR = Path(__file__).parent / 'levels'
