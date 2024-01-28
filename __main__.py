@@ -267,7 +267,12 @@ class Application:
                 if len(points) > 1:
                     points = [(self.cam.gridToScreen(x_, y_), v) for (x_, y_, v) in points]
                     points = [p[0] for p in points]
-                    pygame.draw.lines(self.streamLines, pygame.Color(80, 110, 140, 255), False, points)
+
+                    r = int(min(255, self.backgroundColor[0] + len(points) * 1.25))
+                    g = int(min(255, self.backgroundColor[1] + len(points) * 1.25))
+                    b = int(min(255, self.backgroundColor[2] + len(points) * 1.25))
+
+                    pygame.draw.lines(self.streamLines, pygame.Color(r, g, b, 255), False, points)
 
     def showStreamLines(self):
         self.updateStreamLines()
