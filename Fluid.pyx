@@ -189,30 +189,9 @@ cdef class Fluid:
 
         x = self.conv_coord(x)
         y = self.conv_coord(y)
-        x -= 0.5
-        y -= 0.5
 
-        x = max(0, min(x, self.width - 0.001))
-        y = max(0, min(y, self.height - 0.001))
-
-        x0 = <uint32_t>floor(x)
-        y0 = <uint32_t>floor(y)
-        x1 = x0 + 1
-        y1 = y0 + 1
-        tx = x - x0
-        ty = y - y0
-        sx = 1.0 - tx
-        sy = 1.0 - ty
-
-        u = (sx*sy * self.velocity[x0, y0, 0]
-            + tx*sy * self.velocity[x1, y0, 0]
-            + tx*ty * self.velocity[x1, y1, 0]
-            + sx*ty * self.velocity[x0, y1, 0]);
-
-        v = (sx*sy * self.velocity[x0, y0, 1]
-            + tx*sy * self.velocity[x1, y0, 1]
-            + tx*ty * self.velocity[x1, y1, 1]
-            + sx*ty * self.velocity[x0, y1, 1]);
+        u = self.sampleField(x, y, VELOCITY_X)
+        v = self.sampleField(x, y, VELOCITY_Y)
 
         return (u / self.granularity, v / self.granularity)
 
