@@ -15,6 +15,7 @@ from bitmapfont import BitmapFont
 import time
 from Fluid import Fluid
 import math
+from pathlib import Path
 
 from cam import *
 
@@ -32,6 +33,8 @@ CLOUDS = []
 SHOW_DEBUG_INFO = True
 SHOW_STREAMLINES = True
 
+LEVELS_DIR = Path(__file__).parent / 'levels'
+GFX_DIR = Path(__file__).parent / 'gfx'
 
 class Application:
     def __init__(self):
@@ -45,7 +48,7 @@ class Application:
         self.level = []
         self.lev_w = 0
         self.lev_h = 0
-        self.level_amount = len(os.listdir("./levels"))
+        self.level_amount = sum(1 for _ in LEVELS_DIR.iterdir())
 
         flags = pygame.SCALED
 
@@ -82,65 +85,65 @@ class Application:
         self.debugTilePos = None
 
     def loadGraphics(self):
-        TILES['#'] = pygame.image.load('gfx/tile_wall.png')
-        TILES[' '] = pygame.image.load('gfx/tile_air.png')
-        TILES['*'] = pygame.image.load('gfx/tile_air.png') # feather spawn point, render as empty tile
-        TILES['/'] = pygame.image.load('gfx/tile_air__rain.png')
-        TILES['F'] = (pygame.image.load('gfx/tile_feet.png'), pygame.image.load('gfx/tile_feet2.png'))
-        TILES['a'] = pygame.image.load('gfx/tile_lantern.png')
-        TILES['A'] = pygame.image.load('gfx/tile_lanterntop.png')
-        TILES['_'] = pygame.image.load('gfx/tile_floor.png')
-        TILES['g'] = pygame.image.load('gfx/tile_grill.png')
-        TILES['T'] = pygame.image.load('gfx/tile_housetop_antenna.png')
-        TILES['c'] = pygame.image.load('gfx/tile_air__AC_l.png')
-        TILES['C'] = pygame.image.load('gfx/tile_air__AC_r.png')
-        TILES['h'] = pygame.image.load('gfx/tile_house_l.png')
-        TILES['i'] = pygame.image.load('gfx/tile_house_m.png')
-        TILES['j'] = pygame.image.load('gfx/tile_house_r.png')
-        TILES['H'] = pygame.image.load('gfx/tile_housetop_l.png')
-        TILES['d'] = pygame.image.load('gfx/tile_pipe_d.png')
-        TILES['b'] = pygame.image.load('gfx/tile_pipe_b.png')
-        TILES['q'] = pygame.image.load('gfx/tile_pipe_q.png')
-        TILES['p'] = pygame.image.load('gfx/tile_pipe_p.png')
-        TILES['-'] = pygame.image.load('gfx/tile_pipe_-.png')
-        TILES['l'] = pygame.image.load('gfx/tile_pipe_l.png')
-        TILES['o'] = pygame.image.load('gfx/tile_pipe__motor.png')
-        TILES['u'] = pygame.image.load('gfx/tile_pipe__up_in.png')
-        TILES['n'] = pygame.image.load('gfx/tile_pipe__down_out.png')
-        TILES['m'] = pygame.image.load('gfx/tile_assembly_line.png')
-        TILES['X'] = (pygame.image.load('gfx/tile_grill1.png'), pygame.image.load('gfx/tile_grill2.png'), pygame.image.load('gfx/tile_grill3.png'))
-        TILES['Y'] = pygame.image.load('gfx/tile_plant.png')
-        # TILES['I'] = pygame.image.load('gfx/tile_housetop_m.png')
-        # TILES['J'] = pygame.image.load('gfx/tile_housetop_r.png')
+        TILES['#'] = pygame.image.load(GFX_DIR / 'tile_wall.png')
+        TILES[' '] = pygame.image.load(GFX_DIR / 'tile_air.png')
+        TILES['*'] = pygame.image.load(GFX_DIR / 'tile_air.png') # feather spawn point, render as empty tile
+        TILES['/'] = pygame.image.load(GFX_DIR / 'tile_air__rain.png')
+        TILES['F'] = (pygame.image.load(GFX_DIR / 'tile_feet.png'), pygame.image.load(GFX_DIR / 'tile_feet2.png'))
+        TILES['a'] = pygame.image.load(GFX_DIR / 'tile_lantern.png')
+        TILES['A'] = pygame.image.load(GFX_DIR / 'tile_lanterntop.png')
+        TILES['_'] = pygame.image.load(GFX_DIR / 'tile_floor.png')
+        TILES['g'] = pygame.image.load(GFX_DIR / 'tile_grill.png')
+        TILES['T'] = pygame.image.load(GFX_DIR / 'tile_housetop_antenna.png')
+        TILES['c'] = pygame.image.load(GFX_DIR / 'tile_air__AC_l.png')
+        TILES['C'] = pygame.image.load(GFX_DIR / 'tile_air__AC_r.png')
+        TILES['h'] = pygame.image.load(GFX_DIR / 'tile_house_l.png')
+        TILES['i'] = pygame.image.load(GFX_DIR / 'tile_house_m.png')
+        TILES['j'] = pygame.image.load(GFX_DIR / 'tile_house_r.png')
+        TILES['H'] = pygame.image.load(GFX_DIR / 'tile_housetop_l.png')
+        TILES['d'] = pygame.image.load(GFX_DIR / 'tile_pipe_d.png')
+        TILES['b'] = pygame.image.load(GFX_DIR / 'tile_pipe_b.png')
+        TILES['q'] = pygame.image.load(GFX_DIR / 'tile_pipe_q.png')
+        TILES['p'] = pygame.image.load(GFX_DIR / 'tile_pipe_p.png')
+        TILES['-'] = pygame.image.load(GFX_DIR / 'tile_pipe_-.png')
+        TILES['l'] = pygame.image.load(GFX_DIR / 'tile_pipe_l.png')
+        TILES['o'] = pygame.image.load(GFX_DIR / 'tile_pipe__motor.png')
+        TILES['u'] = pygame.image.load(GFX_DIR / 'tile_pipe__up_in.png')
+        TILES['n'] = pygame.image.load(GFX_DIR / 'tile_pipe__down_out.png')
+        TILES['m'] = pygame.image.load(GFX_DIR / 'tile_assembly_line.png')
+        TILES['X'] = (pygame.image.load(GFX_DIR / 'tile_grill1.png'), pygame.image.load(GFX_DIR / 'tile_grill2.png'), pygame.image.load(GFX_DIR / 'tile_grill3.png'))
+        TILES['Y'] = pygame.image.load(GFX_DIR / 'tile_plant.png')
+        # TILES['I'] = pygame.image.load(GFX_DIR / 'tile_housetop_m.png')
+        # TILES['J'] = pygame.image.load(GFX_DIR / 'tile_housetop_r.png')
 
         global FEATHERS
-        FEATHERS += [pygame.image.load('gfx/feather1.png'),
-                     pygame.image.load('gfx/feather2.png'),
-                     pygame.image.load('gfx/feather3.png'),
-                     pygame.image.load('gfx/feather4.png'),
-                     pygame.image.load('gfx/feather5.png'),
-                     pygame.image.load('gfx/feather6.png'),
-                     pygame.image.load('gfx/feather7.png'),
-                     pygame.image.load('gfx/feather8.png'),
+        FEATHERS += [pygame.image.load(GFX_DIR / 'feather1.png'),
+                     pygame.image.load(GFX_DIR / 'feather2.png'),
+                     pygame.image.load(GFX_DIR / 'feather3.png'),
+                     pygame.image.load(GFX_DIR / 'feather4.png'),
+                     pygame.image.load(GFX_DIR / 'feather5.png'),
+                     pygame.image.load(GFX_DIR / 'feather6.png'),
+                     pygame.image.load(GFX_DIR / 'feather7.png'),
+                     pygame.image.load(GFX_DIR / 'feather8.png'),
                      ]
 
         global CLOUDS
-        CLOUDS += [pygame.image.load('gfx/cloud1.png'),
-                   pygame.image.load('gfx/cloud2.png'),
-                   pygame.image.load('gfx/cloud3.png'),
-                   pygame.image.load('gfx/cloud4.png'),
-                   pygame.image.load('gfx/cloud5.png'),
-                   pygame.image.load('gfx/cloud6.png'),
-                   pygame.image.load('gfx/cloud7.png'),
+        CLOUDS += [pygame.image.load(GFX_DIR / 'cloud1.png'),
+                   pygame.image.load(GFX_DIR / 'cloud2.png'),
+                   pygame.image.load(GFX_DIR / 'cloud3.png'),
+                   pygame.image.load(GFX_DIR / 'cloud4.png'),
+                   pygame.image.load(GFX_DIR / 'cloud5.png'),
+                   pygame.image.load(GFX_DIR / 'cloud6.png'),
+                   pygame.image.load(GFX_DIR / 'cloud7.png'),
                    ]
 
-        self.font = BitmapFont('gfx/heimatfont.png', font_w=8, font_h=8, line_h=10, scr_w=SCR_W, scr_h=SCR_H)
-        self.bigfont = BitmapFont('gfx/heimatfont.png', font_w=8, font_h=8, line_h=10, zoom=3, scr_w=SCR_W, scr_h=SCR_H)
+        self.font = BitmapFont(GFX_DIR / 'heimatfont.png', font_w=8, font_h=8, line_h=10, scr_w=SCR_W, scr_h=SCR_H)
+        self.bigfont = BitmapFont(GFX_DIR / 'heimatfont.png', font_w=8, font_h=8, line_h=10, zoom=3, scr_w=SCR_W, scr_h=SCR_H)
 
     def loadLevel(self, level_name):
         print('loading level: ' + str(level_name))
 
-        with open(f"levels/{level_name}.lvl") as f:
+        with (LEVELS_DIR / f"{level_name}.lvl").open() as f:
             self.level = [line.rstrip("\r\n") for line in f.readlines()]
 
         # find longest line
@@ -199,7 +202,7 @@ class Application:
     def saveLevel(self, level_name):
         print('saving level: ' + str(level_name))
 
-        with open(f"levels/{level_name}.lvl", "w") as f:
+        with (LEVELS_DIR / f"{level_name}.lvl").open("w") as f:
             for line in self.level:
                 f.write(line + '\n')
 
