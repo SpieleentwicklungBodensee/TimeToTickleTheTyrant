@@ -1,9 +1,9 @@
 d------------------------------b
 l   d----------------b3   *    l
-q---p  d-----------b ne        l
-#    d-p        ///l  3    Y   l
-# u  l           //l  e    Y   l
-# l  l            /l  E    Yd--p
+q---p  d-----------b ne   X    l
+#    d-p        ///l  3  c#Y   l
+# u  l           //l  e   ##   l
+# l  l            /l  E   ##d--p
 # l  l  d--+-b     l     c##l   
 # l  l  l    l     l u    ##l   
 # q--p  n  T l     q+p    ##l   
@@ -11,6 +11,6 @@ q---p  d-----------b ne        l
 ##      u ww l       ww   d-p   
 do----oop ww n       ww   q----b
 n         ww         ww        l
-          ww         ww        l
-F         ww mmmmm   ww        l
+   Y T    ww         ww        l
+F  ###    ww mmmmm   ww        l
 -------------------------------p

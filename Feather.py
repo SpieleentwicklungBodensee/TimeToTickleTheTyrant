@@ -58,17 +58,23 @@ class Feather:
 
     def updatePosition(self, dt):
         potential_pos = self.pos + self.v * dt
-        nbr_wall = self.detectWall(potential_pos)
+
+        # NOTE TO FUTURE SELF: ALWAYS CHECK HORIZ/VERT SEPERATELY!!
+
+        # horizontal check
+        nbr_wall = self.detectWall((potential_pos[0], self.pos[1]))
         if nbr_wall is not None:
             if nbr_wall[0] != 0: # left/right wall
                 self.v[0] = -self.v[0] /10  # fudge v to not get stuck in wall
+
+        # vertical check
+        nbr_wall = self.detectWall((self.pos[0], potential_pos[1]))
+        if nbr_wall is not None:
             if nbr_wall[1] != 0: # top/bottom wall
                 self.v[1] = -self.v[1] /10  # fudge v to not get stuck in wall
 
-            corrected_pos = self.pos + self.v * dt
-            self.pos = corrected_pos
-        else:
-            self.pos = potential_pos
+        corrected_pos = self.pos + self.v * dt
+        self.pos = corrected_pos
 
     def render(self, screen):
         feather = self.feather_sprites[self.anim_cnt]
@@ -85,12 +91,12 @@ class Feather:
 
     def detectWall(self, potential_pos):
 
+        #  0      2
+        #   o----o
+        #   |    |
+        #   |    |
+        #   o----o
         #  1      3
-        #   o----o
-        #   |    |
-        #   |    |
-        #   o----o
-        #  2      4
 
         collision_point = np.copy(potential_pos)
         bbox = self.getBoundingBox(collision_point)
