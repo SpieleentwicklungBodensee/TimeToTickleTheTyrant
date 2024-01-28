@@ -343,8 +343,11 @@ class Application:
                                 feet_pos = self.cam.gridToWorld_tileCenter(x,y)
                     offset = 50*i + 20
                     haha = HAHAHA[i]
-                    haha = pygame.transform.smoothscale_by(haha, (.2,.2))
-                    self.screen.blit(haha, (feet_pos[0] + offset, feet_pos[1] - offset*1.3))
+                    scale = ((i + 1) /5 ** 2)
+                    if i == 0:
+                        scale *= 1.5
+                    haha = pygame.transform.smoothscale(haha, (haha.get_width() * scale, haha.get_height() * scale))
+                    self.screen.blit(haha, (feet_pos[0] + offset, feet_pos[1] - offset*0.3))
 
         # show help
         if SHOW_DEBUG_INFO:
