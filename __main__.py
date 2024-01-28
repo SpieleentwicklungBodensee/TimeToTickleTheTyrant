@@ -111,6 +111,7 @@ class Application:
         TILES['u'] = pygame.image.load('gfx/tile_pipe__up_in.png')
         TILES['n'] = pygame.image.load('gfx/tile_pipe__down_out.png')
         TILES['m'] = pygame.image.load('gfx/tile_assembly_line.png')
+        TILES['w'] = pygame.image.load('gfx/tile_workshelf.png')
         TILES['X'] = (pygame.image.load('gfx/tile_grill1.png'), pygame.image.load('gfx/tile_grill2.png'), pygame.image.load('gfx/tile_grill3.png'))
         TILES['Y'] = pygame.image.load('gfx/tile_plant.png')
         # TILES['I'] = pygame.image.load('gfx/tile_housetop_m.png')
