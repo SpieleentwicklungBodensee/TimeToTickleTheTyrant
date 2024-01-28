@@ -22,6 +22,9 @@ class Cam:
     def worldToGrid(self,x, y):
         return int(x // TILE_W), int(y // TILE_H)
 
+    def gridToWorld_tileCenter(self,x, y):
+        return int(x * TILE_W - self.pos_x + .5 * TILE_W), int(y * TILE_H - self.pos_y + .5 * TILE_H)
+
     def worldToScreen(self, x, y):
         return int(x - self.pos_x), int(y - self.pos_y)
 

@@ -28,6 +28,8 @@ except ImportError:
 TILES = {}
 FEATHERS = []
 CLOUDS = []
+HAHAHA = []
+WINCON_TIMINGS = [45, 90, 135, 180]
 
 
 SHOW_DEBUG_INFO = __debug__
@@ -81,7 +83,8 @@ class Application:
         self.edit_delete = False
 
         self.helpScreen = pygame.Surface((SCR_W / 3, 12 * self.font.line_h), pygame.SRCALPHA)
-
+        self.wincon_cnt = 0
+        self.wincon_state = -1  # -1 not won yet, 0-3 used to displayed the haha + win screen
         self.debugTilePos = None
 
     def loadGraphics(self):
@@ -138,6 +141,13 @@ class Application:
                    pygame.image.load(GFX_DIR / 'cloud7.png'),
                    ]
 
+        global HAHAHA
+        HAHAHA += [
+            pygame.image.load(GFX_DIR / 'laughing_1.png'),
+            pygame.image.load(GFX_DIR / 'laughing_2.png'),
+            pygame.image.load(GFX_DIR / 'laughing_3.png'),
+        ]
+
         self.font = BitmapFont(GFX_DIR / 'heimatfont.png', font_w=8, font_h=8, line_h=10, scr_w=SCR_W, scr_h=SCR_H)
         self.bigfont = BitmapFont(GFX_DIR / 'heimatfont.png', font_w=8, font_h=8, line_h=10, zoom=3, scr_w=SCR_W, scr_h=SCR_H)
 
@@ -181,6 +191,8 @@ class Application:
             self.feather.pos = self.cam.gridToScreen(*feather_spawn) + gridCenterOffset
 
         self.cloud = Cloud(CLOUDS, self.cam)
+        self.wincon_cnt = 0
+        self.wincon_state = -1
 
     def updateWindSources(self):
         self.windSources.clear()
@@ -311,6 +323,20 @@ class Application:
         # render cloud (player)
         if not self.edit_mode:
             self.cloud.render(self.screen)
+
+        # render win HAHA
+        if self.wincon_state >= 0:
+            for i in range(0, 3):
+                if self.wincon_cnt >= WINCON_TIMINGS[i]:
+
+                    for y in range(self.lev_h):
+                        for x in range(self.lev_w):
+                            if self.level[y][x] == "F":
+                                feet_pos = self.cam.gridToWorld_tileCenter(x,y)
+                    offset = 50*i + 20
+                    haha = HAHAHA[i]
+                    haha = pygame.transform.smoothscale_by(haha, (.2,.2))
+                    self.screen.blit(haha, (feet_pos[0] + offset, feet_pos[1] - offset*1.3))
 
         # show help
         if SHOW_DEBUG_INFO:
@@ -476,6 +502,15 @@ class Application:
         self.blowFromCloud()
         self.checkWinCondition()
 
+        if self.wincon_state >= 0:
+            self.wincon_cnt += 1
+            if self.wincon_cnt > WINCON_TIMINGS[len(WINCON_TIMINGS)-1]:
+                self.level_i += 1
+                if self.level_i > self.level_amount:
+                    self.level_i = 1
+                self.loadLevel(self.level_i)
+
+
         if self.edit_mode:
             self.updateEdit()
 
@@ -496,9 +531,8 @@ class Application:
         feather_tile = self.cam.worldToGrid(self.feather.pos[0],self.feather.pos[1])
         tile_chr = self.level[feather_tile[1]][feather_tile[0]]
         if tile_chr == "F":
-            print("CHICKEN DINNER")
-
-        pass
+            if self.wincon_state < 0:
+                self.wincon_state += 1
 
     def run(self):
         self.running = True
