@@ -95,24 +95,27 @@ cdef class Fluid:
         return (self.velocity[x - 1, y, 1] + self.velocity[x, y, 1]
               + self.velocity[x - 1, y + 1, 1] + self.velocity[x, y + 1, 1]) / 4.0
 
-    cdef advectVelocity(self, int dt):
+    cdef advectVelocity(self, float dt):
         newVelocity = self.velocity.copy()
 
+        cdef float damping = 0.95
+
+        cdef int x, y
         for y in range(1, self.height):
             for x in range(1, self.width):
                 if self.space[x, y] and self.space[x - 1, y] and y < self.height - 1:
                     nx = x - dt * self.velocity[x, y, 0]
-                    ny = y - dt * self.avgVelocityY(x, y)
-                    newVelocity[x, y, 0] = self.sampleField(nx, ny, VELOCITY_X)
+                    ny = (y + 0.5) - dt * self.avgVelocityY(x, y)
+                    newVelocity[x, y, 0] = self.sampleField(nx, ny, VELOCITY_X) * damping
 
                 if self.space[x, y] and self.space[x, y - 1] and x < self.width - 1:
-                    nx = x - dt * self.avgVelocityX(x, y)
+                    nx = (x + 0.5) - dt * self.avgVelocityX(x, y)
                     ny = y - dt * self.velocity[x, y, 1]
-                    newVelocity[x, y, 1] = self.sampleField(nx, ny, VELOCITY_Y)
+                    newVelocity[x, y, 1] = self.sampleField(nx, ny, VELOCITY_Y) * damping
 
         self.velocity = newVelocity
 
-    cdef advectSmoke(self, int dt):
+    cdef advectSmoke(self, float dt):
         newSmoke = self.smoke.copy()
 
         for x in range(1, self.width - 1):
@@ -157,31 +160,27 @@ cdef class Fluid:
     cdef float sampleField(self, float x, float y, field):
         cdef uint32_t x0, y0
 
-        x -= 0.5
-        y -= 0.5
+        x = max(1, min(x, self.width - 0.001))
+        y = max(1, min(y, self.height - 0.001))
 
-        x = max(0, min(x, self.width - 0.001))
-        y = max(0, min(y, self.height - 0.001))
+        if field == VELOCITY_X:
+            y -= 0.5
+        else:
+            x -= 0.5
 
         x0 = <uint32_t>floor(x)
         y0 = <uint32_t>floor(y)
-        x1 = x0 + 1
-        y1 = y0 + 1
+        x1 = min(x0 + 1, self.width - 1)
+        y1 = min(y0 + 1, self.height - 1)
         tx = x - x0
         ty = y - y0
         sx = 1.0 - tx
         sy = 1.0 - ty
 
-        if field == VELOCITY_X:
-            return (sx*sy * self.velocity[x0, y0, 0] +
-                    tx*sy * self.velocity[x1, y0, 0] +
-                    tx*ty * self.velocity[x1, y1, 0] +
-                    sx*ty * self.velocity[x0, y1, 0])
-        elif field == VELOCITY_Y:
-            return (sx*sy * self.velocity[x0, y0, 1] +
-                    tx*sy * self.velocity[x1, y0, 1] +
-                    tx*ty * self.velocity[x1, y1, 1] +
-                    sx*ty * self.velocity[x0, y1, 1])
+        return (sx*sy * self.velocity[x0, y0, field] +
+                tx*sy * self.velocity[x1, y0, field] +
+                tx*ty * self.velocity[x1, y1, field] +
+                sx*ty * self.velocity[x0, y1, field])
 
     cpdef (float, float) sampleVelocity(self, float x, float y):
         cdef uint32_t x0, y0
