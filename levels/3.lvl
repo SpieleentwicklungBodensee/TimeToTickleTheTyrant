@@ -7,9 +7,9 @@ q---p d------------b n         l
       l    d-b     l    l   d--b
       qbd--p l     l u  l   l  l
        ln  T l     l l  q---p  l
-       n  ww l     q-p         l
-        u ww l          d------p
-do----oop ww n          q------b
+       n  ww l     q+p         l
+        u ww l      +   d------p
+do----oop ww n      +   q------b
 n         ww                   l
           ww                   l
 F         ww mmmmm             l
