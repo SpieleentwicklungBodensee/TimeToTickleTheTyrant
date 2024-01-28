@@ -24,6 +24,8 @@ class Feather:
         self.anim_rot = 0
         self.anim_rot_dir = 2
 
+        self.colllision_radius = COLLISION_RADIUS
+
     def update(self, dt, frame_cnt, fluid):
         self.update_phys(dt, fluid)
         self.updateAnimationData(frame_cnt)
@@ -74,6 +76,12 @@ class Feather:
 
         screen.blit(feather, renderpos)
 
+    def getBoundingBox(self, pos=None):
+        if pos is None:
+            pos = self.pos
+
+        return pos[0] - COLLISION_RADIUS, pos[1] - COLLISION_RADIUS, pos[0] + COLLISION_RADIUS, pos[1] + COLLISION_RADIUS
+
     def detectWall(self, potential_pos):
 
         #  1      3
@@ -84,15 +92,16 @@ class Feather:
         #  2      4
 
         collision_point = np.copy(potential_pos)
+        bbox = self.getBoundingBox(collision_point)
 
-        collision_points = []
-        collision_points.append((collision_point[0] - COLLISION_RADIUS, collision_point[1] - COLLISION_RADIUS))
-        collision_points.append((collision_point[0] - COLLISION_RADIUS, collision_point[1] + COLLISION_RADIUS))
-        collision_points.append((collision_point[0] + COLLISION_RADIUS, collision_point[1] - COLLISION_RADIUS))
-        collision_points.append((collision_point[0] + COLLISION_RADIUS, collision_point[1] + COLLISION_RADIUS))
+        points = [(bbox[0], bbox[1]),
+                  (bbox[0], bbox[3]),
+                  (bbox[2], bbox[1]),
+                  (bbox[2], bbox[3]),
+                  ]
 
-        for collision_point in collision_points:
-            x,y = self.cam.worldToGrid(collision_point[0], collision_point[1])
+        for px, py in points:
+            x, y = self.cam.worldToGrid(px, py)
             tile = self.level[y][x]
             if tile in COLLISION_TILES:
                 xcoord,ycoord = self.cam.worldToGrid(self.pos[0], self.pos[1])

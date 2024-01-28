@@ -352,6 +352,12 @@ class Application:
             px, py = self.cam.worldToScreen(*self.feather.pos)
             self.screen.set_at((px, py), (255, 128, 0))
 
+            # show feather bounding box
+            bbox = self.feather.getBoundingBox()
+            bbx, bby = self.cam.worldToScreen(bbox[0], bbox[1])
+            bbw, bbh = bbox[2] - bbox[0] + 1, bbox[3] - bbox[1] + 1
+            pygame.draw.rect(self.screen, (255, 128, 0), (bbx, bby, bbw, bbh), width=1)
+
         # show edit cursor
         if self.edit_mode:
             cursor = self.edit_tile
