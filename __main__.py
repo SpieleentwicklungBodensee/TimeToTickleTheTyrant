@@ -108,11 +108,15 @@ class Application:
         TILES['b'] = pygame.image.load(GFX_DIR / 'tile_pipe_b.png')
         TILES['q'] = pygame.image.load(GFX_DIR / 'tile_pipe_q.png')
         TILES['p'] = pygame.image.load(GFX_DIR / 'tile_pipe_p.png')
-        TILES['-'] = pygame.image.load(GFX_DIR / 'tile_pipe_-.png')
         TILES['l'] = pygame.image.load(GFX_DIR / 'tile_pipe_l.png')
+        TILES['-'] = pygame.image.load(GFX_DIR / 'tile_pipe_-.png')
+        TILES['+'] = (pygame.image.load(GFX_DIR / 'tile_pipe_+_1.png'), pygame.image.load(GFX_DIR / 'tile_pipe_+_1.png'), pygame.image.load(GFX_DIR / 'tile_pipe_+_2.png'), pygame.image.load(GFX_DIR / 'tile_pipe_+_2.png'), pygame.image.load(GFX_DIR / 'tile_pipe_+_3.png'), pygame.image.load(GFX_DIR / 'tile_pipe_+_4.png'), pygame.image.load(GFX_DIR / 'tile_pipe_+.png'))
         TILES['o'] = pygame.image.load(GFX_DIR / 'tile_pipe__motor.png')
         TILES['u'] = pygame.image.load(GFX_DIR / 'tile_pipe__up_in.png')
         TILES['n'] = pygame.image.load(GFX_DIR / 'tile_pipe__down_out.png')
+        TILES['E'] = pygame.image.load(GFX_DIR / 'tile_crane.png')
+        TILES['e'] = pygame.image.load(GFX_DIR / 'tile_crane_rope.png')
+        TILES['3'] = pygame.image.load(GFX_DIR / 'tile_crane_rope2.png')
         TILES['m'] = pygame.image.load(GFX_DIR / 'tile_assembly_line.png')
         TILES['w'] = pygame.image.load(GFX_DIR / 'tile_workshelf.png')
         TILES['X'] = (pygame.image.load(GFX_DIR / 'tile_grill1.png'), pygame.image.load(GFX_DIR / 'tile_grill2.png'), pygame.image.load(GFX_DIR / 'tile_grill3.png'))
@@ -280,6 +284,10 @@ class Application:
         self.level[y] = line
 
     def updateCamera(self):
+        if not self.edit_mode:
+            x, y = self.feather.pos
+            self.cam.followPos(x, y)
+
         bounds = (self.lev_w, self.lev_h)
         self.cam.scroll(bounds, (self.scroll_xdir, self.scroll_ydir))
 
@@ -348,11 +356,12 @@ class Application:
 
             self.font.drawText(self.helpScreen, 'LEVEL %02i (%02ix%02i)' % (self.level_i, self.lev_w, self.lev_h), x=1, y=1)
             self.font.drawText(self.helpScreen, '')
-            self.font.drawText(self.helpScreen, 'WASD = SCROLL AROUND')
+            # self.font.drawText(self.helpScreen, 'WASD = SCROLL AROUND')
             self.font.drawText(self.helpScreen, 'F1/F2 = PREV/NEXT LEVEL')
-            self.font.drawText(self.helpScreen, 'F8 = SHOW/HIDE WIND LINES')
-            self.font.drawText(self.helpScreen, 'F10 = TOGGLE EDIT MODE')
-            self.font.drawText(self.helpScreen, 'F12 = SHOW/HIDE THIS HELP')
+            self.font.drawText(self.helpScreen, '')
+            self.font.drawText(self.helpScreen, 'F8  =  WIND LINES')
+            self.font.drawText(self.helpScreen, 'F10 = EDIT MODE')
+            self.font.drawText(self.helpScreen, 'F12 = TOGGLE THIS HELP')
             self.font.drawText(self.helpScreen, '')
 
             if self.edit_mode:
@@ -372,6 +381,12 @@ class Application:
 
             px, py = self.cam.worldToScreen(*self.feather.pos)
             self.screen.set_at((px, py), (255, 128, 0))
+
+            # show feather bounding box
+            bbox = self.feather.getBoundingBox()
+            bbx, bby = self.cam.worldToScreen(bbox[0], bbox[1])
+            bbw, bbh = bbox[2] - bbox[0] + 1, bbox[3] - bbox[1] + 1
+            pygame.draw.rect(self.screen, (255, 128, 0), (bbx, bby, bbw, bbh), width=1)
 
         # show edit cursor
         if self.edit_mode:

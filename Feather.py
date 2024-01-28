@@ -1,4 +1,4 @@
-import math
+import cam
 
 import numpy as np
 import random
@@ -12,8 +12,8 @@ COLLISION_TILES = ["#", 'h', 'i', 'j', 'H', 'X', 'Y']
 
 
 class Feather:
-    def __init__(self, feather_sprites, cam, level):
-        self.cam = cam
+    def __init__(self, feather_sprites, _cam, level):
+        self.cam = _cam
         self.level = level
         self.feather_sprites = feather_sprites
         self.v = np.array([0., 0.])
@@ -23,6 +23,8 @@ class Feather:
         self.anim_speed = 8     # lower means faster
         self.anim_rot = 0
         self.anim_rot_dir = 2
+
+        self.colllision_radius = COLLISION_RADIUS
 
     def update(self, dt, frame_cnt, fluid):
         self.update_phys(dt, fluid)
@@ -45,7 +47,7 @@ class Feather:
         self.updatePosition(dt)
         self.v += (dt * GRAVITY)
 
-        x, y = self.cam.worldToGrid(self.pos[0], self.pos[1])
+        x, y = self.pos[0] / cam.TILE_W, self.pos[1] / cam.TILE_H
         v_wind = np.array(fluid.sampleVelocity(x, y))
         dv = self.v - v_wind * 1000.0
 
@@ -61,6 +63,9 @@ class Feather:
                 self.v[0] = -self.v[0] /10  # fudge v to not get stuck in wall
             if nbr_wall[1] != 0: # top/bottom wall
                 self.v[1] = -self.v[1] /10  # fudge v to not get stuck in wall
+
+            corrected_pos = self.pos + self.v * dt
+            self.pos = corrected_pos
         else:
             self.pos = potential_pos
 
@@ -70,6 +75,12 @@ class Feather:
         renderpos = (self.pos[0] - self.cam.pos_x - feather.get_width() / 2, self.pos[1] - self.cam.pos_y - feather.get_height() / 2)
 
         screen.blit(feather, renderpos)
+
+    def getBoundingBox(self, pos=None):
+        if pos is None:
+            pos = self.pos
+
+        return pos[0] - COLLISION_RADIUS, pos[1] - COLLISION_RADIUS, pos[0] + COLLISION_RADIUS, pos[1] + COLLISION_RADIUS
 
     def detectWall(self, potential_pos):
 
@@ -81,15 +92,16 @@ class Feather:
         #  2      4
 
         collision_point = np.copy(potential_pos)
+        bbox = self.getBoundingBox(collision_point)
 
-        collision_points = []
-        collision_points.append((collision_point[0] - COLLISION_RADIUS, collision_point[1] - COLLISION_RADIUS))
-        collision_points.append((collision_point[0] - COLLISION_RADIUS, collision_point[1] + COLLISION_RADIUS))
-        collision_points.append((collision_point[0] + COLLISION_RADIUS, collision_point[1] - COLLISION_RADIUS))
-        collision_points.append((collision_point[0] + COLLISION_RADIUS, collision_point[1] + COLLISION_RADIUS))
+        points = [(bbox[0], bbox[1]),
+                  (bbox[0], bbox[3]),
+                  (bbox[2], bbox[1]),
+                  (bbox[2], bbox[3]),
+                  ]
 
-        for collision_point in collision_points:
-            x,y = self.cam.worldToGrid(collision_point[0], collision_point[1])
+        for px, py in points:
+            x, y = self.cam.worldToGrid(px, py)
             tile = self.level[y][x]
             if tile in COLLISION_TILES:
                 xcoord,ycoord = self.cam.worldToGrid(self.pos[0], self.pos[1])
