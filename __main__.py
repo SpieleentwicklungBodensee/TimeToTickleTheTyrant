@@ -330,11 +330,12 @@ class Application:
 
             self.font.drawText(self.helpScreen, 'LEVEL %02i (%02ix%02i)' % (self.level_i, self.lev_w, self.lev_h), x=1, y=1)
             self.font.drawText(self.helpScreen, '')
-            self.font.drawText(self.helpScreen, 'WASD = SCROLL AROUND')
+            # self.font.drawText(self.helpScreen, 'WASD = SCROLL AROUND')
             self.font.drawText(self.helpScreen, 'F1/F2 = PREV/NEXT LEVEL')
-            self.font.drawText(self.helpScreen, 'F8 = SHOW/HIDE WIND LINES')
-            self.font.drawText(self.helpScreen, 'F10 = TOGGLE EDIT MODE')
-            self.font.drawText(self.helpScreen, 'F12 = SHOW/HIDE THIS HELP')
+            self.font.drawText(self.helpScreen, '')
+            self.font.drawText(self.helpScreen, 'F8  =  WIND LINES')
+            self.font.drawText(self.helpScreen, 'F10 = EDIT MODE')
+            self.font.drawText(self.helpScreen, 'F12 = TOGGLE THIS HELP')
             self.font.drawText(self.helpScreen, '')
 
             if self.edit_mode:
