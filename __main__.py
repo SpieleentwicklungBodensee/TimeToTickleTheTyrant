@@ -31,6 +31,8 @@ CLOUDS = []
 HAHAHA = []
 WINCON_TIMINGS = [45, 90, 135, 180]
 
+WIND_BLOCKERS = ['#', 'd', 'b', 'q', 'p', 'l', '-', '+', 'o', 'u', 'n']
+
 
 SHOW_DEBUG_INFO = __debug__
 SHOW_STREAMLINES = True
@@ -205,12 +207,14 @@ class Application:
             for x in range(self.lev_w):
                 if self.level[y][x] == "X": # heat grill
                     self.windSources.append((x, y-1, 0, -1))
-
+                if self.level[y][x] == "+": # pipe grill
+                    self.windSources.append((x, y-1, 0, -1))
+                    self.windSources.append((x, y+1, 0, +1))
 
     def updateLevelWind(self):
         for y in range(self.lev_h):
             for x in range(self.lev_w):
-                if self.level[y][x] == '#':
+                if self.level[y][x] in WIND_BLOCKERS:
                     self.fluid.setSpace(x, y, 0)
                     self.fluid.setBlockVelocity(x, y, (0.0, 0.0))
                 else:
