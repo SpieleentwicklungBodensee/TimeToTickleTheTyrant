@@ -22,7 +22,7 @@ jobs:
       - name: Build
         run: |
           pip install -e .
-          python -OO -m PyInstaller TimeToTickleTheTyrant.spec
+          python -O -m PyInstaller TimeToTickleTheTyrant.spec
 
       - uses: a7ul/tar-action@v1.1.0
         id: compress
@@ -56,7 +56,7 @@ jobs:
       - name: Build
         run: |
           pip install -e .
-          python -OO -m PyInstaller TimeToTickleTheTyrant.spec
+          python -O -m PyInstaller TimeToTickleTheTyrant.spec
 
       - uses: a7ul/tar-action@v1.1.0
         id: compress
@@ -90,7 +90,7 @@ jobs:
       - name: Build
         run: |
           pip install -e .
-          python -OO -m PyInstaller TimeToTickleTheTyrant.spec
+          python -O -m PyInstaller TimeToTickleTheTyrant.spec
 
       - uses: a7ul/tar-action@v1.1.0
         id: compress
