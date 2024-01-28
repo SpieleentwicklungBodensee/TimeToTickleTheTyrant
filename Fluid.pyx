@@ -79,10 +79,12 @@ cdef class Fluid:
                 self.velocity[x, y + 1, 1] += self.space[x, y + 1] * p
 
     cdef extrapolate(self):
+        cdef int x
         for x in range(self.width):
             self.velocity[x, 0, 0] = self.velocity[x, 1, 0]
             self.velocity[x, -1, 0] = self.velocity[x, -2, 0]
 
+        cdef int y
         for y in range(self.height):
             self.velocity[0, y, 1] = self.velocity[1, y, 1]
             self.velocity[-1, y, 1] = self.velocity[-2, y, 1]
