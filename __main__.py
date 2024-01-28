@@ -272,8 +272,9 @@ class Application:
         self.level[y] = line
 
     def updateCamera(self):
-        x, y = self.feather.pos
-        self.cam.followPos(x, y)
+        if not self.edit_mode:
+            x, y = self.feather.pos
+            self.cam.followPos(x, y)
 
         bounds = (self.lev_w, self.lev_h)
         self.cam.scroll(bounds, (self.scroll_xdir, self.scroll_ydir))
