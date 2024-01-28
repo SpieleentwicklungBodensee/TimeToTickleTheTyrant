@@ -61,6 +61,9 @@ class Feather:
                 self.v[0] = -self.v[0] /10  # fudge v to not get stuck in wall
             if nbr_wall[1] != 0: # top/bottom wall
                 self.v[1] = -self.v[1] /10  # fudge v to not get stuck in wall
+
+            corrected_pos = self.pos + self.v * dt
+            self.pos = corrected_pos
         else:
             self.pos = potential_pos
 
