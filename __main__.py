@@ -212,7 +212,7 @@ class Application:
             for x in range(self.lev_w):
                 if self.level[y][x] == '#':
                     self.fluid.setSpace(x, y, 0)
-                    self.fluid.setVelocity(x, y, (0.0, 0.0))
+                    self.fluid.setBlockVelocity(x, y, (0.0, 0.0))
                 else:
                     self.fluid.setSpace(x, y, 1)
 
@@ -534,7 +534,7 @@ class Application:
 
     def blowFromCloud(self):
         if self.cloud.isBlowing():
-            cx, cy = self.cam.worldToGrid(self.cloud.pos[0], self.cloud.pos[1])
+            cx, cy = self.cloud.pos[0] / cam.TILE_W, self.cloud.pos[1] / cam.TILE_H
             blowdir = self.cloud.getBlowDirection()
             bx, by = cx + blowdir[0], cy + blowdir[1]
             self.fluid.setVelocity(bx, by, blowdir)

@@ -40,17 +40,24 @@ cdef class Fluid:
             for dy in range(self.granularity):
                 self.space[x0 + dx, y0 + dx] = s
 
+    def setBlockVelocity(self, int x, int y, v):
+        x0 = x * self.granularity + 1
+        y0 = y * self.granularity + 1
+
+        for dx in range(self.granularity + 1):
+            for dy in range(self.granularity + 1):
+                self.velocity[x0 + dx, y0 + dy, 0] = v[0]
+                self.velocity[x0 + dx, y0 + dy, 1] = v[1]
+
     def setVelocity(self, float x_, float y_, v):
-        cdef int x = <int>floor(self.conv_coord(x_))
-        cdef int y = <int>floor(self.conv_coord(y_))
         v *= self.granularity
 
-        # todo we currently do this to clear new walls
-        #if self.space[x, y] == 0:
-        #    print('error attempted to set invalid velocity', x, y)
-        #    return
-
+        cdef int x = <int>floor(self.conv_coord(x_) + 0.5)
+        cdef int y = <int>floor(self.conv_coord(y_))
         self.velocity[x, y, 0] = v[0]
+
+        x = <int>floor(self.conv_coord(x_))
+        y = <int>floor(self.conv_coord(y_) + 0.5)
         self.velocity[x, y, 1] = v[1]
 
     cdef solveIncompressibility(self):
