@@ -24,19 +24,10 @@ jobs:
           pip install -e .
           python -O -m PyInstaller TimeToTickleTheTyrant.spec
 
-      - uses: a7ul/tar-action@v1.1.0
-        id: compress
-        with:
-          command: c
-          cwd: dist
-          files: |
-            ./TimeToTickleTheTyrant
-          outPath: linux.tar.gz
-
       - uses: actions/upload-artifact@v3
         with:
           name: Linux
-          path: ./*.tar.gz
+          path: ./dist/TimeToTickleTheTyrant
 
 
   build_windows:
@@ -60,19 +51,10 @@ jobs:
           pip install -e .
           python -O -m PyInstaller TimeToTickleTheTyrant.spec
 
-      - uses: a7ul/tar-action@v1.1.0
-        id: compress
-        with:
-          command: c
-          cwd: dist
-          files: |
-            ./TimeToTickleTheTyrant
-          outPath: windows.tar.gz
-
       - uses: actions/upload-artifact@v3
         with:
           name: Windows
-          path: ./*.tar.gz
+          path: ./dist/TimeToTickleTheTyrant.exe
 
   build_macos:
     name: Build Mac OS x64
@@ -95,18 +77,9 @@ jobs:
           pip install -e .
           python -O -m PyInstaller TimeToTickleTheTyrant.spec
 
-      - uses: a7ul/tar-action@v1.1.0
-        id: compress
-        with:
-          command: c
-          cwd: dist
-          files: |
-            ./TimeToTickleTheTyrant
-          outPath: macos.tar.gz
-
       - uses: actions/upload-artifact@v3
         with:
           name: MacOs
-          path: ./*.tar.gz
+          path: ./dist/TimeToTickleTheTyrant
 
 
